@@ -9,7 +9,7 @@ import yfinance as yf
 from django.urls import reverse
 from test_app.stockDataCollector import *
 from .models import Stock, User, Call, Put
-
+from test_app.API import *
 import datetime
 
 # Create your views here.
@@ -44,10 +44,10 @@ def main_page(request):
 
 def view_selected_stock(request):
     try:
-        selected_ticker = Stock.objects.get(pk=request.POST['ticker'])
+        selected_ticker = StockAPI.get(request.POST['ticker'])
     except (KeyError, Stock.DoesNotExist):
         addNewStock(request.POST['ticker'])
-        selected_ticker = Stock.objects.get(pk=request.POST['ticker'])
+        selected_ticker = StockAPI.get(request.POST['ticker'])
     else:
         pullNewStockPrice(selected_ticker.ticker)
     finally:
