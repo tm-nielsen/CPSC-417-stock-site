@@ -1,0 +1,18 @@
+
+<html>
+<head>
+    <title>Microsoft</title>
+</head>
+<body>
+    <h1>
+        Stock Price Viewer
+    </h1>
+    <p>
+        Please enter a stock ticker
+    </p>
+    <form action="{% url 'test_app:test_view' %}" method=post">
+        <input type = "text" name = "ticker"/><br/>
+        <input type = "submit" name = "submit"/>
+    </form>
+</body>
+</html>

@@ -1,0 +1,20 @@
+
+<html>
+<head>
+    <title>Stock Information</title>
+</head>
+<body>
+    <h1>Stock information</h1>
+    <h2>{{error_message}}</h2>
+    <h2>{{ticker}}</h2>
+    <h3>{{value}}</h3>
+    <form action="{% url 'calls_information' ticker %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="View Calls">
+    </form>
+    <form action="{% url 'puts_information' ticker %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="View Puts">
+    </form>
+</body>
+</html>

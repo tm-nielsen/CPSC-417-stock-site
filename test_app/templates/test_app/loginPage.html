@@ -1,0 +1,19 @@
+
+<html>
+<head>
+    <title>Login</title>
+</head>
+<body>
+    <h1>Please enter your login information</h1><br/>
+    <h2>{{error_message}}</h2>
+    <form action="{% url 'main_page'  %}" method="POST">
+        {% csrf_token %}
+        <p>Username</p>
+        <input type="text" name="username"/><br/>
+        <p>Password</p>
+        <input type="password" name="password"/><br/>
+        <input type="submit" value="Login"/>
+    </form>
+
+</body>
+</html>

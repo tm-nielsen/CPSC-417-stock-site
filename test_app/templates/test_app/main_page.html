@@ -1,0 +1,15 @@
+
+<html>
+<head>
+    <title>Main Page</title>
+</head>
+<body>
+    <h1>Please enter a stock</h1><br/>
+    <h2>{{error_message}}</h2><br/>
+    <form action="{% url 'view_selected_stock'  %}" method="POST">
+        {% csrf_token %}
+        <input type="text" name="ticker"/>
+        <input type="submit" name="submit"/><br/>
+    </form>
+</body>
+</html>

@@ -19,7 +19,13 @@ from django.urls import include
 # this is a correct import of the views from test app, ignore IDE warnings
 from test_app import views
 
+app_name = 'test_app'
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.test_view)
+    path('', views.login_page),
+    path('stock_info/', views.view_selected_stock, name='view_selected_stock'),
+    path('main_page/', views.main_page, name='main_page'),
+    path('<str:ticker>/calls_information/', views.calls_information, name='calls_information'),
+    path('<str:ticker>/puts_information/', views.puts_information, name='puts_information'),
+    path('<str:ticker>/display_calls_information', views.display_calls_information, name='display_calls_information')
 ]
