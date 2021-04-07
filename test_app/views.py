@@ -35,6 +35,14 @@ def login_attempt(request):
             return HttpResponseRedirect(reverse('main_page', args=(the_user.username,)))
 
 
+def register_user(request):
+    return render(request, 'test_app/register_user.html')
+
+
+def register_analyst(request):
+    return render(request, 'test_app/register_analyst.html')
+
+
 def main_page(request, username):
     return render(request, 'test_app/main_page.html', {
         'username': username,

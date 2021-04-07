@@ -14,6 +14,16 @@
         <input type="password" name="password"/><br/>
         <input type="submit" value="Login"/>
     </form>
+    <h3>Register an Account</h3>
+    <form action ="{% url 'register_user' %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="Register as a User"/>
+    </form>
+    <h3>Register an Analyst Account</h3>
+    <form action ="{% url 'register_analyst' %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="Register as an Analyst"/>
+    </form>
 
 </body>
 </html>

@@ -24,6 +24,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.login_page),
     path('login_attempt', views.login_attempt, name='login_attempt'),
+    path('register_user', views.register_user, name='register_user'),
+    path('register_analyst', views.register_analyst, name='register_analyst'),
     path('stock_info/', views.view_selected_stock, name='view_selected_stock'),
     path('<str:username>/viewed_history/', views.display_viewed_history, name='viewed_history'),
     path('<str:username>/main_page/', views.main_page, name='main_page'),
