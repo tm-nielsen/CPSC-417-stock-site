@@ -27,5 +27,6 @@ urlpatterns = [
     path('main_page/', views.main_page, name='main_page'),
     path('<str:ticker>/calls_information/', views.calls_information, name='calls_information'),
     path('<str:ticker>/puts_information/', views.puts_information, name='puts_information'),
-    path('<str:ticker>/display_calls_information', views.display_calls_information, name='display_calls_information')
+    path('<str:ticker>/display_calls_information', views.display_calls_information, name='display_calls_information'),
+    path('<str:users_name>/watchlist', views.display_watchlist, name='watchlist')
 ]

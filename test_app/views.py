@@ -21,13 +21,8 @@ def login_page(request):
     return HttpResponse(temp.render(context, request))
 
 def main_page(request):
-    try:
-        the_user = User.objects.get(pk=request.POST['username'])
-    except (KeyError, User.DoesNotExist):
-        user_list = User.objects.all()
-        for u in user_list:
-            print(u.username)
-            print(u.password)
+    the_user = UserAPI.get(request.POST['username'])
+    if the_user == None:
         return render(request, 'test_app/loginPage.html', {
             'error_message': 'Incorrect Username'
         })
@@ -43,20 +38,18 @@ def main_page(request):
 
 
 def view_selected_stock(request):
-    try:
-        selected_ticker = StockAPI.get(request.POST['ticker'])
-    except (KeyError, Stock.DoesNotExist):
+    selected_ticker = StockAPI.get(request.POST['ticker'])
+    if selected_ticker == None:
         addNewStock(request.POST['ticker'])
         selected_ticker = StockAPI.get(request.POST['ticker'])
     else:
         pullNewStockPrice(selected_ticker.ticker)
-    finally:
-        reverse('calls_information', args=(selected_ticker.ticker,))
-        return render(request, 'test_app/stock_info.html', {
-            'ticker': selected_ticker.ticker,
-            'value': selected_ticker.current_value,
-            'error_message': ""
-        })
+    reverse('calls_information', args=(selected_ticker.ticker,))
+    return render(request, 'test_app/stock_info.html', {
+        'ticker': selected_ticker.ticker,
+        'value': selected_ticker.current_value,
+        'error_message': ""
+    })
 
 
 def calls_information(request, ticker):
@@ -85,6 +78,10 @@ def calls_information(request, ticker):
         else:
             return HttpResponseRedirect(reverse('display_calls_information', args=(ticker,)))
 
+def display_watchlist(request, users_name):
+    return render(request, 'test_app/watchlist.html', {
+        'users_name': users_name
+    })
 
 def display_calls_information(request, ticker):
     return render(request, 'test_app/calls_info.html', {
@@ -93,7 +90,9 @@ def display_calls_information(request, ticker):
 
 
 def puts_information(request, ticker):
-    print()
+    return render(request, 'test_app/puts_info.html', {
+        'ticker': ticker
+    })
 
 
 def test_view(request):
