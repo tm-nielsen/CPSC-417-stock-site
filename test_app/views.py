@@ -83,9 +83,14 @@ def calls_information(request, ticker):
         else:
             return HttpResponseRedirect(reverse('display_calls_information', args=(ticker,)))
 
-def display_watchlist(request, users_name):
+def display_watchlist(request, username):
     return render(request, 'test_app/watchlist.html', {
-        'users_name': users_name
+        'username': username
+    })
+
+def display_viewed_history(request, username):
+    return render(request, 'test_app/viewed_history.html', {
+        'username': username
     })
 
 def display_calls_information(request, ticker):

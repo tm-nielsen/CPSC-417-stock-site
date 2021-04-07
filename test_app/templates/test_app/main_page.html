@@ -17,5 +17,10 @@
         {% csrf_token %}
         <input type="submit" name="watchlist" value="View"/>
     </form>
+    <h3>View Viewed History</h3>
+    <form action="{% url 'viewed_history' username %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" name="viewed_history" value="View"/>
+    </form>
 </body>
 </html>
