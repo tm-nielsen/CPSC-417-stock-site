@@ -1,6 +1,7 @@
 import yfinance as yf
 from .models import Stock, Exchange
 
+
 def pullNewStockPrice(ticker):
     theStock = yf.Ticker(ticker)
     data = theStock.history()
@@ -13,7 +14,6 @@ def pullNewStockPrice(ticker):
     else:
         theEntry.current_value = last_quote
         theEntry.save()
-
 
 
 def addNewStock(ticker):

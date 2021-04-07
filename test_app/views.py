@@ -50,20 +50,27 @@ def main_page(request, username):
     })
 
 
-def view_selected_stock(request):
+def searching_ticker(request, username):
     selected_ticker = StockAPI.get(request.POST['ticker'])
     if selected_ticker is None:
         addNewStock(request.POST['ticker'])
         selected_ticker = StockAPI.get(request.POST['ticker'])
     else:
         pullNewStockPrice(selected_ticker.ticker)
-    reverse('calls_information', args=(selected_ticker.ticker,))
+    return HttpResponseRedirect(reverse('view_selected_stock', args=(username, selected_ticker.ticker,)))
+
+
+def view_selected_stock(request, username, ticker):
+    selected_ticker = StockAPI.get(ticker)
     return render(request, 'test_app/stock_info.html', {
         'ticker': selected_ticker.ticker,
         'value': selected_ticker.current_value,
-        'error_message': ""
+        'error_message': "",
+        'username': username
     })
 
+def add_to_watchlist(request, username, ticker):
+    selected_ticker = StockAPI.get(ticker)
 
 def calls_information(request, ticker):
     try:

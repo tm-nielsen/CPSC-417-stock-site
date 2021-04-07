@@ -16,5 +16,9 @@
         {% csrf_token %}
         <input type="submit" value="View Puts">
     </form>
+    <form action="{% url 'add_to_watchlist' username ticker %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="Add Stock To Watchlist"/>
+    </form>
 </body>
 </html>

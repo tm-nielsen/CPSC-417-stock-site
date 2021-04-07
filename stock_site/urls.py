@@ -26,11 +26,14 @@ urlpatterns = [
     path('login_attempt', views.login_attempt, name='login_attempt'),
     path('register_user', views.register_user, name='register_user'),
     path('register_analyst', views.register_analyst, name='register_analyst'),
-    path('stock_info/', views.view_selected_stock, name='view_selected_stock'),
+    path('<str:username>/searching_ticker', views.searching_ticker, name='searching_ticker'),
+    path('<str:username>/<str:ticker>/stock_info/', views.view_selected_stock, name='view_selected_stock'),
+    path('<str:username>/<str:ticker>/processing_add', views.add_to_watchlist, name='add_to_watchlist'),
+    path('add_to_watchlist/', views.add_to_watchlist, name='add_to_watchlist'),
     path('<str:username>/viewed_history/', views.display_viewed_history, name='viewed_history'),
     path('<str:username>/main_page/', views.main_page, name='main_page'),
     path('<str:ticker>/calls_information/', views.calls_information, name='calls_information'),
     path('<str:ticker>/puts_information/', views.puts_information, name='puts_information'),
     path('<str:ticker>/display_calls_information', views.display_calls_information, name='display_calls_information'),
-    path('<str:users_name>/watchlist', views.display_watchlist, name='watchlist')
+    path('<str:username>/watchlist', views.display_watchlist, name='watchlist')
 ]
