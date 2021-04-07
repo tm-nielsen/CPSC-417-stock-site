@@ -4,12 +4,18 @@
     <title>Main Page</title>
 </head>
 <body>
-    <h1>Please enter a stock</h1><br/>
+    <h1>Welcome {{username}}</h1><br/>
     <h2>{{error_message}}</h2><br/>
+    <h3>Search a Ticker</h3>
     <form action="{% url 'view_selected_stock'  %}" method="POST">
         {% csrf_token %}
         <input type="text" name="ticker"/>
         <input type="submit" name="submit"/><br/>
+    </form>
+    <h3>View My Watchlist</h3>
+    <form action="{% url 'watchlist' username %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" name="watchlist" value="View"/>
     </form>
 </body>
 </html>

@@ -20,9 +20,9 @@ def login_page(request):
     }
     return HttpResponse(temp.render(context, request))
 
-def main_page(request):
+def login_attempt(request):
     the_user = UserAPI.get(request.POST['username'])
-    if the_user == None:
+    if the_user is None:
         return render(request, 'test_app/loginPage.html', {
             'error_message': 'Incorrect Username'
         })
@@ -32,14 +32,19 @@ def main_page(request):
                 'error_message': 'Incorrect Password'
             })
         else:
-            return render(request, 'test_app/main_page.html', {
-                'error_message': ''
-            })
+            return HttpResponseRedirect(reverse('main_page', args=(the_user.username,)))
+
+
+def main_page(request, username):
+    return render(request, 'test_app/main_page.html', {
+        'username': username,
+        'error_message': ''
+    })
 
 
 def view_selected_stock(request):
     selected_ticker = StockAPI.get(request.POST['ticker'])
-    if selected_ticker == None:
+    if selected_ticker is None:
         addNewStock(request.POST['ticker'])
         selected_ticker = StockAPI.get(request.POST['ticker'])
     else:
