@@ -4,12 +4,14 @@
 </head>
 <body>
     <h1>My Watchlist</h1>
+    <hr>
         {% for entry in watchlist %}
-            <br>
-                {{entry.ticker.ticker}}</br>
-                {{entry.ticker.name}} </br>
+            <h3>
+                {{entry.ticker.ticker}}
+            </h3>
+                {{entry.ticker.name}} <br>
                 {{entry.ticker.current_value}}
-            </p>
+            <hr>
         {% endfor %}
 </body>
 </html>
