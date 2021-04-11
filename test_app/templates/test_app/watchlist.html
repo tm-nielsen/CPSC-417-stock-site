@@ -3,6 +3,13 @@
     <title>Stock Watchlist</title>
 </head>
 <body>
-    <p>Coming Soon</p>
+    <h1>My Watchlist</h1>
+    <ul>
+        {% for entry in watchlist %}
+            <li>
+                {{entry.ticker}}
+            </li>
+        {% endfor %}
+    </ul>
 </body>
 </html>

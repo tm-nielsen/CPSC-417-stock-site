@@ -133,9 +133,9 @@ class AnalystAPI:
 
 class WatchlistEntryAPI:
     @staticmethod
-    def get(primary_key):
+    def get(ticker, user):
         try:
-            we = Watchlist_Entry.objects.get(pk=primary_key)
+            we = Watchlist_Entry.objects.get(ticker=ticker, username=user)
         except(KeyError, Watchlist_Entry.DoesNotExist):
             return None
         else:
@@ -154,6 +154,11 @@ class WatchlistEntryAPI:
     @staticmethod
     def getAll():
         we = Watchlist_Entry.objects.getAll()
+        return we
+
+    @staticmethod
+    def get_for_user(user):
+        we = Watchlist_Entry.objects.filter(username=user)
         return we
 
 

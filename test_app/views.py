@@ -11,6 +11,7 @@ from test_app.stockDataCollector import *
 from .models import Stock, User, Call, Put
 from test_app.API import *
 import datetime
+import plotly.graph_objects as go
 
 # Create your views here.
 def login_page(request):
@@ -62,15 +63,29 @@ def searching_ticker(request, username):
 
 def view_selected_stock(request, username, ticker):
     selected_ticker = StockAPI.get(ticker)
+    cv = selected_ticker.current_value
     return render(request, 'test_app/stock_info.html', {
         'ticker': selected_ticker.ticker,
-        'value': selected_ticker.current_value,
+        'value': cv,
         'error_message': "",
-        'username': username
+        'username': username,
     })
 
 def add_to_watchlist(request, username, ticker):
     selected_ticker = StockAPI.get(ticker)
+    current_user = StockAPI.get(username)
+    error_message = ''
+    if WatchlistEntryAPI.get(ticker, username) is None:
+        WatchlistEntryAPI.put(username, ticker)
+    else:
+        error_message = 'Already On Watchlist'
+    return render(request, 'test_app/stock_info.html', {
+        'ticker': selected_ticker.ticker,
+        'value': selected_ticker.current_value,
+        'error_message': error_message,
+        'username': username,
+    })
+
 
 def calls_information(request, ticker):
     try:
@@ -99,8 +114,10 @@ def calls_information(request, ticker):
             return HttpResponseRedirect(reverse('display_calls_information', args=(ticker,)))
 
 def display_watchlist(request, username):
+    watchlist = WatchlistEntryAPI.get_for_user(username)
     return render(request, 'test_app/watchlist.html', {
-        'username': username
+        'username': username,
+        'watchlist': watchlist
     })
 
 def display_viewed_history(request, username):
