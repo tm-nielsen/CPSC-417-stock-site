@@ -3,6 +3,20 @@
     <title>Register User</title>
 </head>
 <body>
-    <p>Coming Soon</p>
+    <h1>Register as a User</h1>
+    <h2>Please enter the following information</h2>
+    <h2>{{error_message}}</h2>
+    <form action="{% url 'register_user_attempt' %}" method="POST">
+        {% csrf_token %}
+        <h3>Name</h3>
+        <input type="text" name="name"/><br>
+        <h3>Email</h3>
+        <input type="text" name="email"/><br>
+        <h3>Username</h3>
+        <input type="text" name="username"/><br>
+        <h3>Password</h3>
+        <input type="password" name="password"/><br>
+        <input type="submit" value="Create Account"/>
+    </form>
 </body>
 </html>

@@ -17,36 +17,90 @@ import plotly.graph_objects as go
 def login_page(request):
     temp = loader.get_template('test_app/loginPage.html')
     context = {
-        'error_message': ''
+        'message': ''
     }
     return HttpResponse(temp.render(context, request))
 
 def login_attempt(request):
     the_user = UserAPI.get(request.POST['username'])
-    if the_user is None:
+    the_analyst = AnalystAPI.get(request.POST['username'])
+    if the_user is None and the_analyst is None:
         return render(request, 'test_app/loginPage.html', {
-            'error_message': 'Incorrect Username'
+            'message': 'Incorrect Username'
         })
     else:
-        if the_user.password != request.POST['password']:
+        if (the_user is not None and the_user.password != request.POST['password']) or \
+                (the_analyst is not None and the_analyst.password != request.POST['password']):
             return render(request, 'test_app/loginPage.html', {
-                'error_message': 'Incorrect Password'
+                'message': 'Incorrect Password'
             })
-        else:
+        elif the_user is not None:
             return HttpResponseRedirect(reverse('main_page', args=(the_user.username,)))
+        else:
+            return HttpResponseRedirect(reverse('analyst_main_page', args=(the_analyst.username,)))
 
 
 def register_user(request):
-    return render(request, 'test_app/register_user.html')
+    return render(request, 'test_app/register_user.html', {
+        'error_message': ''
+    })
+
+def register_user_attempt(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    name = request.POST['name']
+    email = request.POST['email']
+    check_dup_user_username = UserAPI.get(username)
+    check_dup_analyst_username = AnalystAPI.get(username)
+    if check_dup_user_username is not None or check_dup_analyst_username is not None:
+        return render(request, 'test_app/register_user.html', {
+            'error_message': 'This Username is Taken'
+        })
+    elif not name or not email or not username or not password:
+        return render(request, 'test_app/register_user.html', {
+            'error_message': 'Please Fill Out All Required Fields'
+        })
+    UserAPI.put(username, email, name, password)
+    return render(request, 'test_app/loginPage.html', {
+        'message': 'Account Created Successfully'
+    })
 
 
 def register_analyst(request):
-    return render(request, 'test_app/register_analyst.html')
+    return render(request, 'test_app/register_analyst.html', {
+        'error_message': ''
+    })
 
+
+def register_analyst_attempt(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    name = request.POST['name']
+    email = request.POST['email']
+    check_dup_user_username = UserAPI.get(username)
+    check_dup_analyst_username = AnalystAPI.get(username)
+    if check_dup_user_username is not None or check_dup_analyst_username is not None:
+        return render(request, 'test_app/register_analyst.html', {
+            'error_message': 'This Username is Taken'
+        })
+    elif not name or not email or not username or not password:
+        return render(request, 'test_app/register_analyst.html', {
+            'error_message': 'Please Fill Out All Required Fields'
+        })
+    AnalystAPI.put(username, email, name, password)
+    return render(request, 'test_app/loginPage.html', {
+        'message': 'Account Created Successfully'
+    })
 
 def main_page(request, username):
     return render(request, 'test_app/main_page.html', {
         'username': username,
+        'error_message': ''
+    })
+
+def analyst_main_page(request, username):
+    return render(request, 'test_app/analyst_main_page.html', {
+        'Username': username,
         'error_message': ''
     })
 
