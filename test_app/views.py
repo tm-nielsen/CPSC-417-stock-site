@@ -8,6 +8,7 @@ from test_app.models import *
 import yfinance as yf
 from django.urls import reverse
 from test_app.stockDataCollector import *
+from .current_user import CurrentUser
 from .models import Stock, User, Call, Put
 from test_app.API import *
 import datetime
@@ -35,8 +36,12 @@ def login_attempt(request):
                 'message': 'Incorrect Password'
             })
         elif the_user is not None:
+            u = CurrentUser.get_instance()
+            u.set_username(the_user, 'U')
             return HttpResponseRedirect(reverse('main_page', args=(the_user.username,)))
         else:
+            a = CurrentUser.get_instance()
+            a.set_username(the_analyst, 'A')
             return HttpResponseRedirect(reverse('analyst_main_page', args=(the_analyst.username,)))
 
 
@@ -127,7 +132,6 @@ def view_selected_stock(request, username, ticker):
 
 def add_to_watchlist(request, username, ticker):
     selected_ticker = StockAPI.get(ticker)
-    current_user = StockAPI.get(username)
     error_message = ''
     if WatchlistEntryAPI.get(ticker, username) is None:
         WatchlistEntryAPI.put(username, ticker)

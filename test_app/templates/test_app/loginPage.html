@@ -9,9 +9,9 @@
     <form action="{% url 'login_attempt'  %}" method="POST">
         {% csrf_token %}
         <p>Username</p>
-        <input type="text" name="username"/><br/>
+        <input type="text" name="username"/><br>
         <p>Password</p>
-        <input type="password" name="password"/><br/>
+        <input type="password" name="password"/><br>
         <input type="submit" value="Login"/>
     </form>
     <h3>Register an Account</h3>
