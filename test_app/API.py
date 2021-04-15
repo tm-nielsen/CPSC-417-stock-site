@@ -199,8 +199,8 @@ class ExchangeAPI:
             return e
 
     @staticmethod
-    def put(names, exchange_id):
-        e = Exchange(names=names, exchange_id=exchange_id)
+    def put(exchange_timezone, exchange_id):
+        e = Exchange(exchange_timezone=exchange_timezone, exchange_id=exchange_id)
         e.save()
 
     @staticmethod
@@ -225,8 +225,8 @@ class StockAPI:
             return the_stock
 
     @staticmethod
-    def put(name, current_value, ticker, dividend_date, dividend_ammount, exhange_id):
-        s = Stock(name = name, current_value = current_value, ticker = ticker, dividend_date = dividend_date, dividend_ammount = dividend_ammount, exhange_id = ExchangeAPI.get(exhange_id))
+    def put(name, current_value, ticker, ex_dividend_date, dividend_ammount, exhange_id):
+        s = Stock(name = name, current_value = current_value, ticker = ticker, ex_dividend_date = ex_dividend_date, dividend_ammount = dividend_ammount, exhange_id = ExchangeAPI.get(exhange_id))
         s.save()
 
     @staticmethod

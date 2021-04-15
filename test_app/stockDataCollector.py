@@ -3,6 +3,7 @@ from django.utils.datetime_safe import strftime
 from test_app.API import *
 from .models import Stock, Exchange
 import datetime
+from datetime import datetime
 
 
 def pullNewStockPrice(ticker):
@@ -15,21 +16,29 @@ def pullNewStockPrice(ticker):
 
 
 def addNewStock(ticker):
-    theStock = yf.Ticker(ticker)
-    info = theStock.info
-    currentPrice = theStock.history().tail(1)['Close'].iloc[0]
-    currentPrice = round(currentPrice, 2)
-    compName = info['shortName']
-    divAmount = info['dividendRate']
-    if divAmount is None:
-        divAmount = 0
     try:
-        theExchange = Exchange.objects.get(pk='Placeholder')
-    except(KeyError, Exchange.DoesNotExist):
-        addNewExchange('Placeholder', 'Placeholder')
-        theExchange = Exchange.objects.get(pk='Placeholder')
-    s = Stock(name=compName, current_value=currentPrice, ticker=ticker, dividend_date="2000-01-01", dividend_amount=divAmount, exchange_id=theExchange)
-    s.save()
+        the_stock = yf.Ticker(ticker)
+        info = the_stock.info
+        current_price = the_stock.history().tail(1)['Close'].iloc[0]
+        current_price = round(current_price, 2)
+        comp_name = info['shortName']
+        div_amount = info['dividendRate']
+        ex_dividend_date = None
+        exchange_id = info['exchange']
+        exchange_timezone = info['exchangeTimezoneName']
+        if div_amount is None:
+            div_amount = 0
+        else:
+            ex_dividend_date = datetime.utcfromtimestamp(the_stock.info['lastDividendDate'])
+    except ValueError:
+        return False
+    except KeyError:
+        return False
+    exchange = ExchangeAPI.get(exchange_id)
+    if exchange is None:
+        ExchangeAPI.put(exchange_timezone, exchange_id)
+    StockAPI.put(comp_name, current_price, ticker, ex_dividend_date, div_amount, exchange_id)
+    return True
 
 
 def addCalls(ticker, expiry_date):
@@ -68,7 +77,6 @@ def pull_new_calls_info(ticker, expiry_date):
     except ValueError:
         return
     calls = options.calls
-    print(calls)
     prices = calls['strike']
     bids = calls['bid']
     asks = calls['ask']
@@ -137,8 +145,3 @@ def pull_new_puts_info(ticker, expiry_date):
             j = j + 1
         except KeyError:
             j = j + 1
-
-
-def addNewExchange(exchangeID, exchangeName):
-    ex = Exchange(names='Placeholder', exchange_id='Placeholder')
-    ex.save()

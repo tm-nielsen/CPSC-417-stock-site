@@ -2,17 +2,15 @@ from django.db import models
 
 # Create your models here.
 class Exchange(models.Model):
-    names = models.TextField()
+    exchange_timezone = models.TextField()
     exchange_id = models.TextField(primary_key=True)
-    class Meta:
-        unique_together = (('names', 'exchange_id'))
 
 
 class Stock(models.Model):
     name = models.TextField()
     current_value = models.FloatField()
     ticker = models.TextField(primary_key=True)
-    dividend_date = models.DateField()
+    ex_dividend_date = models.DateField(null=True)
     dividend_amount = models.FloatField()
     exchange_id = models.ForeignKey(
         'Exchange',

@@ -115,7 +115,12 @@ def analyst_main_page(request):
 def searching_ticker(request):
     selected_ticker = StockAPI.get(request.POST['ticker'])
     if selected_ticker is None:
-        addNewStock(request.POST['ticker'])
+        stock_exists = addNewStock(request.POST['ticker'])
+        if not stock_exists:
+            return render(request, 'test_app/main_page.html', {
+                'username': request.session['username'],
+                'error_message': 'Unable to Find a Matching Ticker'
+            })
         selected_ticker = StockAPI.get(request.POST['ticker'])
     else:
         pullNewStockPrice(selected_ticker.ticker)
@@ -203,9 +208,9 @@ def display_watchlist(request):
     })
 
 
-def display_viewed_history(request, username):
+def display_viewed_history(request):
     return render(request, 'test_app/viewed_history.html', {
-        'username': username
+        'username': request.session['username']
     })
 
 
