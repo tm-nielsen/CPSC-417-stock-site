@@ -102,7 +102,6 @@ class Analyst(models.Model):
 
 class Analysis(models.Model):
     description = models.TextField()
-    approval = models.IntegerField()
     date = models.DateField()
     title = models.TextField(primary_key=True)
     username = models.ForeignKey(
