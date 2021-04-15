@@ -5,5 +5,16 @@
 <body>
     <h1>Welcome {{username}}</h1><br/>
     <h2>{{error_message}}</h2><br/>
+    <h3>Create New Analysis</h3>
+    <form action="{% url 'create_analysis' %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" name="new_analysis" value="Create"/>
+    </form>
+    <h3>Search for a Analysis</h3>
+    <form action="{% url 'search_analysis' %}" method="POST">
+        {% csrf_token %}
+        <input type="text" name="analysis"/><br/>
+        <input type="submit" name="submit" value="Search"/><br/>
+    </form>
 </body>
 </html>

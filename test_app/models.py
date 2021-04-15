@@ -1,11 +1,13 @@
 from django.db import models
 
+
 # Create your models here.
 class Exchange(models.Model):
     names = models.TextField()
     exchange_id = models.TextField(primary_key=True)
+
     class Meta:
-        unique_together = (('names', 'exchange_id'))
+        unique_together = ('names', 'exchange_id')
 
 
 class Stock(models.Model):
@@ -18,6 +20,7 @@ class Stock(models.Model):
         'Exchange',
         on_delete=models.CASCADE
     )
+
 
 class Put(models.Model):
     expiry_date = models.DateField()
@@ -32,7 +35,8 @@ class Put(models.Model):
 
     class Meta:
         unique_together = (("expiry_date", "strike_price", "ticker"),)
-    
+
+
 class Call(models.Model):
     expiry_date = models.DateField()
     strike_price = models.FloatField()
@@ -47,6 +51,7 @@ class Call(models.Model):
     class Meta:
         unique_together = (("expiry_date", "strike_price", "ticker"),)
 
+
 class Value_History(models.Model):
     id = models.IntegerField(primary_key=True)
     date = models.DateTimeField()
@@ -55,8 +60,10 @@ class Value_History(models.Model):
         'Stock',
         on_delete=models.CASCADE
     )
+
     class Meta:
-        unique_together = (('date','ticker'))
+        unique_together = ('date', 'ticker')
+
 
 class Histogram(models.Model):
     median = models.FloatField()
@@ -64,14 +71,16 @@ class Histogram(models.Model):
     id = models.OneToOneField(
         'Value_History',
         on_delete=models.CASCADE,
-        primary_key = True
+        primary_key=True
     )
+
 
 class User(models.Model):
     username = models.TextField(primary_key=True)
     email = models.TextField()
     name = models.TextField()
     password = models.TextField()
+
 
 class Viewed_History(models.Model):
     date_viewed = models.DateTimeField()
@@ -83,8 +92,10 @@ class Viewed_History(models.Model):
         'Stock',
         on_delete=models.CASCADE
     )
+
     class Meta:
-        unique_together = (('date_viewed', 'username', 'ticker'))
+        unique_together = ('date_viewed', 'username', 'ticker')
+
 
 class Watchlist_Entry(models.Model):
     ticker = models.ForeignKey(
@@ -96,23 +107,26 @@ class Watchlist_Entry(models.Model):
         on_delete=models.CASCADE
     )
 
+
 class Analyst(models.Model):
     username = models.TextField(primary_key=True)
     email = models.TextField()
     name = models.TextField()
     password = models.TextField()
 
+
 class Analysis(models.Model):
     description = models.TextField()
-    approval = models.IntegerField()
     date = models.DateField()
     title = models.TextField(primary_key=True)
     username = models.ForeignKey(
         'Analyst',
         on_delete=models.CASCADE
-        )
+    )
+
     class Meta:
         unique_together = (('title', 'username'),)
+
 
 class Stock_Analysis(models.Model):
     title = models.ForeignKey(
@@ -127,8 +141,10 @@ class Stock_Analysis(models.Model):
         'Stock',
         on_delete=models.CASCADE
     )
+
     class Meta:
-        unique_together = (('title', 'username'))
+        unique_together = ('title', 'username')
+
 
 class Survey(models.Model):
     date = models.DateField()
@@ -144,5 +160,6 @@ class Survey(models.Model):
         'Analyst',
         on_delete=models.CASCADE
     )
+
     class Meta:
-        unique_together = (('survey_id', 'u_username'))
+        unique_together = ('survey_id', 'u_username')

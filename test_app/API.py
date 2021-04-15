@@ -90,8 +90,8 @@ class AnalysisAPI:
             return a
 
     @staticmethod
-    def put(description, approval, date, title, username):
-        a = Analysis(description=description, approval=approval, date=date, title=title, username=(AnalystAPI.get(username)))
+    def put(description, date, title, username):
+        a = Analysis(description=description, date=date, title=title, username=(AnalystAPI.get(username)))
         a.save()
 
     @staticmethod

@@ -12,7 +12,7 @@ from .models import Stock, User, Call, Put
 from test_app.API import *
 import datetime
 from test_app.StockDataHolders import *
-import plotly.graph_objects as go
+
 
 # Create your views here.
 def login_page(request):
@@ -21,6 +21,7 @@ def login_page(request):
         'message': ''
     }
     return HttpResponse(temp.render(context, request))
+
 
 def login_attempt(request):
     the_user = UserAPI.get(request.POST['username'])
@@ -39,13 +40,15 @@ def login_attempt(request):
             request.session['username'] = request.POST['username']
             return HttpResponseRedirect('main_page')
         else:
-            return HttpResponseRedirect(reverse('analyst_main_page', args=(the_analyst.username,)))
+            request.session['username'] = request.POST['username']
+            return HttpResponseRedirect(reverse('analyst_main_page'))
 
 
 def register_user(request):
     return render(request, 'test_app/register_user.html', {
         'error_message': ''
     })
+
 
 def register_user_attempt(request):
     username = request.POST['username']
@@ -94,17 +97,50 @@ def register_analyst_attempt(request):
         'message': 'Account Created Successfully'
     })
 
+
 def main_page(request):
     return render(request, 'test_app/main_page.html', {
         'username': request.session['username'],
         'error_message': ''
     })
 
+
 def analyst_main_page(request):
     return render(request, 'test_app/analyst_main_page.html', {
-        'Username': request.session['username'],
+        'username': request.session['username'],
         'error_message': ''
     })
+
+
+def create_analysis(request):
+    return render(request, 'test_app/create_analysis.html', {
+    })
+
+
+def save_analysis(request):
+    title = request.POST['title']
+    description = request.POST['description']
+    date = datetime.date.today()
+    username = request.session['username']
+    AnalysisAPI.put(description, date, title, username)
+    request.session['username'] = username
+    return HttpResponseRedirect(reverse('analyst_main_page'))
+
+
+def search_analysis(request):
+    selected_analysis = AnalysisAPI.get(request.POST['analysis'])
+    if selected_analysis is None:
+        return render(request, 'test_app/analyst_main_page.html', {
+            'username': request.session['username'],
+            'error_message': 'Analysis not found. Please try again'
+        })
+    else:
+        return render(request, 'test_app/view_analysis.html', {
+            'title': selected_analysis.title,
+            'author': selected_analysis.username.username,
+            'date': selected_analysis.date,
+            'description': selected_analysis.description
+        })
 
 
 def searching_ticker(request):
@@ -125,6 +161,7 @@ def view_selected_stock(request, ticker):
         'value': cv,
         'error_message': "",
     })
+
 
 def add_to_watchlist(request, ticker):
     selected_ticker = StockAPI.get(ticker)
@@ -162,7 +199,7 @@ def calls_information(request, ticker):
             'ticker': ticker,
             'value': StockAPI.get(ticker).current_value,
             'error_message': "There Are No Calls For The Selected Stock"
-            })
+        })
 
 
 def display_calls_information(request, ticker):
@@ -253,12 +290,13 @@ def display_puts_information(request, ticker):
         'put_list': put_list
     })
 
+
 def test_view(request):
-        now = datetime.datetime.now()
-        template = loader.get_template('test_app/testStock.html')
-        return render(template.render(request))
-    #     Only user: %s
-    #   </body>
-    # </html>''' % (
-    #     User.objects.get(username='sample user').name
-    # )
+    now = datetime.datetime.now()
+    template = loader.get_template('test_app/testStock.html')
+    return render(template.render(request))
+#     Only user: %s
+#   </body>
+# </html>''' % (
+#     User.objects.get(username='sample user').name
+# )
