@@ -1,0 +1,39 @@
+body{
+    background-color: black;
+    color: rgb(155, 155, 155);
+    font-family: monospace;
+    font-size: xx-large;
+    text-align: center;
+}
+
+input{
+    background-color:rgb(105, 105, 105);
+    color:rgb(37, 37, 37);
+    border-style: hidden;
+    font-weight: bold;
+    font-size: large;
+}
+
+input.button{
+    border-width: 4px;
+    padding: 4px;
+    border-style:outset;
+    margin-top: -20px;
+}
+
+input.submit{
+    margin-top: 15px;
+}
+
+input:hover{
+    background-color: rgb(220, 220, 220);
+}
+
+input:focus{
+    background-color: white;
+    color:gray;
+}
+
+.error{
+    color:rgb(109, 38, 38);
+}

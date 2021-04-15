@@ -268,9 +268,9 @@ class PutAPI:
 
 class CallAPI:
     @staticmethod
-    def get(primary_key):
+    def get(expiry_date, strike_price, ticker):
         try:
-            the_call = Call.Objects.get(pk=primary_key)
+            the_call = Call.objects.get(expiry_date=expiry_date, strike_price=strike_price, ticker=ticker)
         except(KeyError, Call.DoesNotExist):
             return None
         else:
@@ -287,9 +287,24 @@ class CallAPI:
         the_call.delete()
 
     @staticmethod
+    def get_expiring_on(ticker, date):
+        c = Call.objects.filter(ticker=ticker, expiry_date=date)
+        if c.count() == 0:
+            return None
+        else:
+            return c
+
+    @staticmethod
     def getAll():
         u = Call.objects.getAll()
         return u
+
+    @staticmethod
+    def update_updatable(call, bid, ask, premium):
+        call.bid = bid
+        call.ask = ask
+        call.premium = premium
+        call.save()
 
 
 class ValueHistoryAPI:

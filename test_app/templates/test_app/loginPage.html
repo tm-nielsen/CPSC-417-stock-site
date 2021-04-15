@@ -1,12 +1,13 @@
-
+{% load static %}
 <html>
 <head>
     <title>Login</title>
+    <link rel="stylesheet" href="{% static 'test_app/style.css' %}">
 </head>
 <body>
     <h1>Please enter your login information</h1><br/>
     <h2>{{message}}</h2>
-    <form action="{% url 'login_attempt'  %}" method="POST">
+    <form action="{% url 'login_attempt' %}" method="POST">
         {% csrf_token %}
         <p>Username</p>
         <input type="text" name="username"/><br>

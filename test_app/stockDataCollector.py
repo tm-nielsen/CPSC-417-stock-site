@@ -1,5 +1,8 @@
 import yfinance as yf
+from django.utils.datetime_safe import strftime
+from test_app.API import *
 from .models import Stock, Exchange
+import datetime
 
 
 def pullNewStockPrice(ticker):
@@ -31,10 +34,57 @@ def addNewStock(ticker):
     s.save()
 
 
-def addCalls(ticker):
+def addCalls(ticker, expiry_date):
     theStock = yf.Ticker(ticker)
-    print("please")
-    print(theStock.options)
+    year = expiry_date.strftime("%Y")
+    month = expiry_date.strftime("%m")
+    day = expiry_date.strftime("%d")
+    the_date = year + '-' + month + '-' + day
+    try:
+        options = theStock.option_chain(the_date)
+    except ValueError:
+        return True
+    calls = options.calls
+    prices = calls['strike']
+    bids = calls['bid']
+    asks = calls['ask']
+    premiums = calls['lastPrice']
+    j = 0
+    print(calls)
+    for i in calls:
+        print(j)
+        print(prices[j], bids[j], asks[j], premiums[j])
+        CallAPI.put(expiry_date=expiry_date, strike_price=prices[j], bid=bids[j],
+                    ask=asks[j], premium=premiums[j], ticker=ticker)
+        j = j + 1
+        print("done")
+    print('really done')
+
+
+def pull_new_calls_info(ticker, expiry_date):
+    theStock = yf.Ticker(ticker)
+    year = expiry_date.strftime("%Y")
+    month = expiry_date.strftime("%m")
+    day = expiry_date.strftime("%d")
+    the_date = year + '-' + month + '-' + day
+    try:
+        options = theStock.option_chain(the_date)
+    except ValueError:
+        return
+    calls = options.calls
+    prices = calls['strike']
+    bids = calls['bid']
+    asks = calls['ask']
+    premiums = calls['lastPrice']
+    j = 0
+    for i in calls:
+        current_call = CallAPI.get(expiry_date, prices[j], ticker)
+        if current_call is None:
+            j = j + 1
+            continue
+        CallAPI.update_updatable(current_call, bids[j], asks[j], premiums[j])
+        j = j + 1
+
 
 
 def addNewExchange(exchangeID, exchangeName):

@@ -29,6 +29,9 @@ class Put(models.Model):
         'Stock',
         on_delete=models.CASCADE
     )
+
+    class Meta:
+        unique_together = (("expiry_date", "strike_price", "ticker"),)
     
 class Call(models.Model):
     expiry_date = models.DateField()
@@ -40,6 +43,9 @@ class Call(models.Model):
         'Stock',
         on_delete=models.CASCADE
     )
+
+    class Meta:
+        unique_together = (("expiry_date", "strike_price", "ticker"),)
 
 class Value_History(models.Model):
     id = models.IntegerField(primary_key=True)

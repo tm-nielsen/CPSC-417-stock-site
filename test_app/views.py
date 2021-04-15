@@ -8,10 +8,10 @@ from test_app.models import *
 import yfinance as yf
 from django.urls import reverse
 from test_app.stockDataCollector import *
-from .current_user import CurrentUser
 from .models import Stock, User, Call, Put
 from test_app.API import *
 import datetime
+from test_app.StockDataHolders import *
 import plotly.graph_objects as go
 
 # Create your views here.
@@ -36,12 +36,9 @@ def login_attempt(request):
                 'message': 'Incorrect Password'
             })
         elif the_user is not None:
-            u = CurrentUser.get_instance()
-            u.set_username(the_user, 'U')
-            return HttpResponseRedirect(reverse('main_page', args=(the_user.username,)))
+            request.session['username'] = request.POST['username']
+            return HttpResponseRedirect('main_page')
         else:
-            a = CurrentUser.get_instance()
-            a.set_username(the_analyst, 'A')
             return HttpResponseRedirect(reverse('analyst_main_page', args=(the_analyst.username,)))
 
 
@@ -97,95 +94,115 @@ def register_analyst_attempt(request):
         'message': 'Account Created Successfully'
     })
 
-def main_page(request, username):
+def main_page(request):
     return render(request, 'test_app/main_page.html', {
-        'username': username,
+        'username': request.session['username'],
         'error_message': ''
     })
 
-def analyst_main_page(request, username):
+def analyst_main_page(request):
     return render(request, 'test_app/analyst_main_page.html', {
-        'Username': username,
+        'Username': request.session['username'],
         'error_message': ''
     })
 
 
-def searching_ticker(request, username):
+def searching_ticker(request):
     selected_ticker = StockAPI.get(request.POST['ticker'])
     if selected_ticker is None:
         addNewStock(request.POST['ticker'])
         selected_ticker = StockAPI.get(request.POST['ticker'])
     else:
         pullNewStockPrice(selected_ticker.ticker)
-    return HttpResponseRedirect(reverse('view_selected_stock', args=(username, selected_ticker.ticker,)))
+    return HttpResponseRedirect(reverse('view_selected_stock', args=(selected_ticker.ticker,)))
 
 
-def view_selected_stock(request, username, ticker):
+def view_selected_stock(request, ticker):
     selected_ticker = StockAPI.get(ticker)
     cv = selected_ticker.current_value
     return render(request, 'test_app/stock_info.html', {
         'ticker': selected_ticker.ticker,
         'value': cv,
         'error_message': "",
-        'username': username,
     })
 
-def add_to_watchlist(request, username, ticker):
+def add_to_watchlist(request, ticker):
     selected_ticker = StockAPI.get(ticker)
     error_message = ''
-    if WatchlistEntryAPI.get(ticker, username) is None:
-        WatchlistEntryAPI.put(username, ticker)
+    if WatchlistEntryAPI.get(ticker, request.session['username']) is None:
+        WatchlistEntryAPI.put(request.session['username'], ticker)
     else:
         error_message = 'Already On Watchlist'
     return render(request, 'test_app/stock_info.html', {
         'ticker': selected_ticker.ticker,
         'value': selected_ticker.current_value,
         'error_message': error_message,
-        'username': username,
+        'username': request.session['username'],
     })
 
 
 def calls_information(request, ticker):
-    try:
-        selected_ticker = Stock.objects.get(pk=ticker)
-    except (KeyError, Stock.DoesNotExist):
-        return render(request, 'test_app/stock_info.html', {
-            'ticker': selected_ticker.ticker,
-            'value': selected_ticker.current_value,
-            'error_message': "Database Error"
-        })
-    else:
-        try:
-            calls = Call.objects.filter(ticker=selected_ticker)
-        except (KeyError, Call.DoesNotExist):
-            calls_exist = addCalls(ticker)
-            if calls_exist:
-                calls = Call.objects.filter(ticker=selected_ticker)
-                return HttpResponseRedirect(reverse('display_calls_information', args=(ticker,)))
-            else:
-                return render(request, 'test_app/stock_info.html', {
-                    'ticker': selected_ticker.ticker,
-                    'value': selected_ticker.current_value,
-                    'error_message': "There Are No Calls For The Selected Stock"
-                })
+    i = 0
+    valid_options = 0
+    while i < 7:
+        the_date = datetime.date.today() + datetime.timedelta(days=i)
+        days_call = CallAPI.get_expiring_on(ticker, the_date)
+        if days_call is None:
+            valid = addCalls(ticker, the_date)
+            if valid:
+                valid_options = valid_options + 1
         else:
-            return HttpResponseRedirect(reverse('display_calls_information', args=(ticker,)))
+            pull_new_calls_info(ticker, the_date)
+            valid_options = valid_options + 1
+        i += 1
+    print('finished while')
+    if valid_options != 0:
+        return HttpResponseRedirect(reverse('display_calls_information', args=(ticker,)))
+    else:
+        return render(request, 'test_app/stock_info.html', {
+            'ticker': ticker,
+            'value': StockAPI.get(ticker).current_value,
+            'error_message': "There Are No Calls For The Selected Stock"
+            })
 
-def display_watchlist(request, username):
-    watchlist = WatchlistEntryAPI.get_for_user(username)
+
+def display_calls_information(request, ticker):
+    call_list = []
+    i = 0
+    j = -1
+    while i < 7:
+        the_date = datetime.date.today() + datetime.timedelta(days=i)
+        days_call = CallAPI.get_expiring_on(ticker, the_date)
+        if days_call is None:
+            i = i + 1
+            continue
+        else:
+            year = the_date.strftime("%Y")
+            month = the_date.strftime("%m")
+            day = the_date.strftime("%d")
+            string_date = year + '-' + month + '-' + day
+            cr = CallsResultsHolder(string_date)
+            for n in days_call:
+                cr.add_call(n)
+            call_list.append(cr)
+            i = i + 1
+    print(call_list)
+    return render(request, 'test_app/calls_info.html', {
+        'ticker': ticker,
+        'call_list': call_list
+    })
+
+
+def display_watchlist(request):
+    watchlist = WatchlistEntryAPI.get_for_user(request.session['username'])
     return render(request, 'test_app/watchlist.html', {
-        'username': username,
         'watchlist': watchlist
     })
+
 
 def display_viewed_history(request, username):
     return render(request, 'test_app/viewed_history.html', {
         'username': username
-    })
-
-def display_calls_information(request, ticker):
-    return render(request, 'test_app/calls_info.html', {
-        'ticker': ticker
     })
 
 
