@@ -1,0 +1,16 @@
+<html>
+<head>
+    <title>New Analysis</title>
+</head>
+<body>
+    <h1>Create New Analysis</h1><br/>
+    <form action="{% url 'save_analysis' %}" method="POST">
+        {% csrf_token %}
+        <p>Title</p>
+        <input type="text" name="title"/>
+        <p>Description</p>
+        <input type="text" name="description"/><br/>
+        <input type="submit" name="submit" value="create"/><br/>
+    </form>
+</body>
+</html>
