@@ -6,25 +6,23 @@ import datetime
 
 
 def pullNewStockPrice(ticker):
-    theStock = yf.Ticker(ticker)
-    data = theStock.history()
+    stock_info = yf.Ticker(ticker)
+    data = stock_info.history()
     last_quote = (data.tail(1)['Close'].iloc[0])
-    try:
-        theEntry = Stock.objects.get(pk=ticker)
-    except(KeyError, Stock.DoesNotExist):
-        addNewStock(ticker)
-        theEntry = Stock.objects.get(pk=ticker)
-    else:
-        theEntry.current_value = last_quote
-        theEntry.save()
+    last_quote = round(last_quote, 2)
+    the_stock = StockAPI.get(ticker)
+    StockAPI.update_price(the_stock, last_quote)
 
 
 def addNewStock(ticker):
     theStock = yf.Ticker(ticker)
     info = theStock.info
     currentPrice = theStock.history().tail(1)['Close'].iloc[0]
+    currentPrice = round(currentPrice, 2)
     compName = info['shortName']
     divAmount = info['dividendRate']
+    if divAmount is None:
+        divAmount = 0
     try:
         theExchange = Exchange.objects.get(pk='Placeholder')
     except(KeyError, Exchange.DoesNotExist):
@@ -51,9 +49,12 @@ def addCalls(ticker, expiry_date):
     premiums = calls['lastPrice']
     j = 0
     for i in calls:
-        CallAPI.put(expiry_date=expiry_date, strike_price=prices[j], bid=bids[j],
-                    ask=asks[j], premium=premiums[j], ticker=ticker)
-        j = j + 1
+        try:
+            CallAPI.put(expiry_date=expiry_date, strike_price=prices[j], bid=bids[j],
+                        ask=asks[j], premium=premiums[j], ticker=ticker)
+            j = j + 1
+        except KeyError:
+            j = j + 1
 
 
 def pull_new_calls_info(ticker, expiry_date):
@@ -67,18 +68,22 @@ def pull_new_calls_info(ticker, expiry_date):
     except ValueError:
         return
     calls = options.calls
+    print(calls)
     prices = calls['strike']
     bids = calls['bid']
     asks = calls['ask']
     premiums = calls['lastPrice']
     j = 0
     for i in calls:
-        current_call = CallAPI.get(expiry_date, prices[j], ticker)
-        if current_call is None:
+        try:
+            current_call = CallAPI.get(expiry_date, prices[j], ticker)
+            if current_call is None:
+                j = j + 1
+                continue
+            CallAPI.update_updatable(current_call, bids[j], asks[j], premiums[j])
             j = j + 1
-            continue
-        CallAPI.update_updatable(current_call, bids[j], asks[j], premiums[j])
-        j = j + 1
+        except KeyError:
+            j = j + 1
 
 
 def addPuts(ticker, expiry_date):
@@ -98,9 +103,12 @@ def addPuts(ticker, expiry_date):
     premiums = puts['lastPrice']
     j = 0
     for i in puts:
-        PutAPI.put(expiry_date=expiry_date, strike_price=prices[j], bid=bids[j],
-                    ask=asks[j], premium=premiums[j], ticker=ticker)
-        j = j + 1
+        try:
+            PutAPI.put(expiry_date=expiry_date, strike_price=prices[j], bid=bids[j],
+                        ask=asks[j], premium=premiums[j], ticker=ticker)
+            j = j + 1
+        except KeyError:
+            j = j + 1
 
 
 def pull_new_puts_info(ticker, expiry_date):
@@ -120,12 +128,15 @@ def pull_new_puts_info(ticker, expiry_date):
     premiums = puts['lastPrice']
     j = 0
     for i in puts:
-        current_put = PutAPI.get(expiry_date, prices[j], ticker)
-        if current_put is None:
+        try:
+            current_put = PutAPI.get(expiry_date, prices[j], ticker)
+            if current_put is None:
+                j = j + 1
+                continue
+            PutAPI.update_updatable(current_put, bids[j], asks[j], premiums[j])
             j = j + 1
-            continue
-        PutAPI.update_updatable(current_put, bids[j], asks[j], premiums[j])
-        j = j + 1
+        except KeyError:
+            j = j + 1
 
 
 def addNewExchange(exchangeID, exchangeName):

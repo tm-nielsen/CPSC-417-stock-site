@@ -14,13 +14,14 @@ import datetime
 from test_app.StockDataHolders import *
 import plotly.graph_objects as go
 
-# Create your views here.
+
 def login_page(request):
     temp = loader.get_template('test_app/loginPage.html')
     context = {
         'message': ''
     }
     return HttpResponse(temp.render(context, request))
+
 
 def login_attempt(request):
     the_user = UserAPI.get(request.POST['username'])
@@ -39,6 +40,7 @@ def login_attempt(request):
             request.session['username'] = request.POST['username']
             return HttpResponseRedirect('main_page')
         else:
+            request.session['username'] = request.POST['username']
             return HttpResponseRedirect(reverse('analyst_main_page', args=(the_analyst.username,)))
 
 
@@ -46,6 +48,7 @@ def register_user(request):
     return render(request, 'test_app/register_user.html', {
         'error_message': ''
     })
+
 
 def register_user_attempt(request):
     username = request.POST['username']
@@ -94,11 +97,13 @@ def register_analyst_attempt(request):
         'message': 'Account Created Successfully'
     })
 
+
 def main_page(request):
     return render(request, 'test_app/main_page.html', {
         'username': request.session['username'],
         'error_message': ''
     })
+
 
 def analyst_main_page(request):
     return render(request, 'test_app/analyst_main_page.html', {
@@ -125,6 +130,7 @@ def view_selected_stock(request, ticker):
         'value': cv,
         'error_message': "",
     })
+
 
 def add_to_watchlist(request, ticker):
     selected_ticker = StockAPI.get(ticker)
@@ -168,7 +174,6 @@ def calls_information(request, ticker):
 def display_calls_information(request, ticker):
     call_list = []
     i = 0
-    j = -1
     while i < 7:
         the_date = datetime.date.today() + datetime.timedelta(days=i)
         days_call = CallAPI.get_expiring_on(ticker, the_date)
@@ -231,7 +236,6 @@ def puts_information(request, ticker):
 def display_puts_information(request, ticker):
     put_list = []
     i = 0
-    j = -1
     while i < 7:
         the_date = datetime.date.today() + datetime.timedelta(days=i)
         days_put = PutAPI.get_expiring_on(ticker, the_date)
@@ -252,13 +256,3 @@ def display_puts_information(request, ticker):
         'ticker': ticker,
         'put_list': put_list
     })
-
-def test_view(request):
-        now = datetime.datetime.now()
-        template = loader.get_template('test_app/testStock.html')
-        return render(template.render(request))
-    #     Only user: %s
-    #   </body>
-    # </html>''' % (
-    #     User.objects.get(username='sample user').name
-    # )

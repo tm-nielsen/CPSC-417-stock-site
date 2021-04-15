@@ -239,6 +239,11 @@ class StockAPI:
         u = Stock.objects.getAll()
         return u
 
+    @staticmethod
+    def update_price(stock, price):
+        stock.current_value = price
+        stock.save()
+
 
 class PutAPI:
     @staticmethod
@@ -252,7 +257,7 @@ class PutAPI:
 
     @staticmethod
     def put(expiry_date, strike_price, bid, ask, premium, ticker):
-        p = Put(expiry_date = expiry_date, strike_price = strike_price, bid = bid, ask = ask, premium = premium, ticker= StockAPI.get(ticker))
+        p = Put(expiry_date=expiry_date, strike_price=strike_price, bid=bid, ask=ask, premium=premium, ticker=StockAPI.get(ticker))
         p.save();
 
     @staticmethod
