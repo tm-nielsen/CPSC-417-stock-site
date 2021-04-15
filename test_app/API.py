@@ -225,8 +225,8 @@ class StockAPI:
             return the_stock
 
     @staticmethod
-    def put(name, current_value, ticker, ex_dividend_date, dividend_ammount, exhange_id):
-        s = Stock(name = name, current_value = current_value, ticker = ticker, ex_dividend_date = ex_dividend_date, dividend_ammount = dividend_ammount, exhange_id = ExchangeAPI.get(exhange_id))
+    def put(name, current_value, ticker, ex_dividend_date, dividend_amount, exchange_id):
+        s = Stock(name = name, current_value = current_value, ticker = ticker, ex_dividend_date = ex_dividend_date, dividend_amount = dividend_amount, exchange_id = ExchangeAPI.get(exchange_id))
         s.save()
 
     @staticmethod
