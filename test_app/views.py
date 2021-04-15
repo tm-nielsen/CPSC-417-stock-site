@@ -12,7 +12,6 @@ from .models import Stock, User, Call, Put
 from test_app.API import *
 import datetime
 from test_app.StockDataHolders import *
-import plotly.graph_objects as go
 
 
 def login_page(request):
@@ -41,7 +40,7 @@ def login_attempt(request):
             return HttpResponseRedirect('main_page')
         else:
             request.session['username'] = request.POST['username']
-            return HttpResponseRedirect(reverse('analyst_main_page', args=(the_analyst.username,)))
+            return HttpResponseRedirect(reverse('analyst_main_page'))
 
 
 def register_user(request):
@@ -107,9 +106,40 @@ def main_page(request):
 
 def analyst_main_page(request):
     return render(request, 'test_app/analyst_main_page.html', {
-        'Username': request.session['username'],
+        'username': request.session['username'],
         'error_message': ''
     })
+
+
+def create_analysis(request):
+    return render(request, 'test_app/create_analysis.html', {
+    })
+
+
+def save_analysis(request):
+    title = request.POST['title']
+    description = request.POST['description']
+    date = datetime.date.today()
+    username = request.session['username']
+    AnalysisAPI.put(description, date, title, username)
+    request.session['username'] = username
+    return HttpResponseRedirect(reverse('analyst_main_page'))
+
+
+def search_analysis(request):
+    selected_analysis = AnalysisAPI.get(request.POST['analysis'])
+    if selected_analysis is None:
+        return render(request, 'test_app/analyst_main_page.html', {
+            'username': request.session['username'],
+            'error_message': 'Analysis not found. Please try again'
+        })
+    else:
+        return render(request, 'test_app/view_analysis.html', {
+            'title': selected_analysis.title,
+            'author': selected_analysis.username.username,
+            'date': selected_analysis.date,
+            'description': selected_analysis.description
+        })
 
 
 def searching_ticker(request):
