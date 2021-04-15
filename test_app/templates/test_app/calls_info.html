@@ -1,18 +1,30 @@
+{% load static %}
 
 <html>
 <head>
     <title>Calls Information</title>
+    <link rel="stylesheet" href="{% static 'test_app/style.css' %}">
 </head>
 <body>
     <h1>{{ticker}} Calls Expiring Within The Next Seven Days</h1>
     {% for entry in call_list %}
-    <hr>
         <h3>{{entry.get_date}}</h3>
-        <p>Strike Price    Bid    Ask    Premium</p>
-        {% for call in entry.get_calls %}
-            <p>${{call.strike_price}}    ${{call.bid}}    ${{call.ask}}    ${{call.premium}}</p>
-        {% endfor %}
-        <hr>
+        <table>
+            <tr>
+                <th>Strike Price</th>
+                <th>Bid</th>
+                <th>Ask</th>
+                <th>Premium</th>
+            </tr>
+            {% for call in entry.get_calls %}
+            <tr>
+                <td>${{call.strike_price}}</td>
+                <td>${{call.bid}}</td>
+                <td>${{call.ask}}</td>
+                <td>${{call.premium}}</td>
+            </tr>
+            {% endfor %}
+        </table>
     {% endfor %}
 </body>
 </html>

@@ -1,18 +1,30 @@
+{% load static %}
 
 <html>
 <head>
     <title>Puts Information</title>
+    <link rel="stylesheet" href="{% static 'test_app/style.css' %}">
 </head>
 <body>
     <h1>{{ticker}} Puts Expiring Within The Next Seven Days</h1>
     {% for entry in put_list %}
-    <hr>
         <h3>{{entry.get_date}}</h3>
-        <p>Strike Price    Bid    Ask    Premium</p>
-        {% for put in entry.get_puts %}
-            <p>${{put.strike_price}}    ${{put.bid}}    ${{put.ask}}    ${{put.premium}}</p>
-        {% endfor %}
-        <hr>
+        <table>
+            <tr>
+                <th>Strike Price</th>
+                <th>Bid</th>
+                <th>Ask</th>
+                <th>Premium</th>
+            </tr>
+            {% for put in entry.get_puts %}
+            <tr>
+                <td>${{put.strike_price}}</td>
+                <td>${{put.bid}}</td>
+                <td>${{put.ask}}</td>
+                <td>${{put.premium}}</td>
+            </tr>
+            {% endfor %}
+        </table>
     {% endfor %}
 </body>
 </html>
