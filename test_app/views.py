@@ -126,6 +126,7 @@ def save_analysis(request):
     return HttpResponseRedirect(reverse('analyst_main_page'))
 
 
+
 def search_analysis(request):
     selected_analysis = AnalysisAPI.get(request.POST['analysis'])
     if selected_analysis is None:
