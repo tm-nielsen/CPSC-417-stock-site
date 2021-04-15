@@ -22,7 +22,7 @@ class PutsResultsHolder:
 
     def __init__(self, date):
         self.date = date
-        self.calls = []
+        self.puts = []
 
     def add_put(self, the_put):
         self.puts.append(the_put)

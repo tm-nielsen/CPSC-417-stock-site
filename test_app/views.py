@@ -155,7 +155,6 @@ def calls_information(request, ticker):
             pull_new_calls_info(ticker, the_date)
             valid_options = valid_options + 1
         i += 1
-    print('finished while')
     if valid_options != 0:
         return HttpResponseRedirect(reverse('display_calls_information', args=(ticker,)))
     else:
@@ -186,7 +185,6 @@ def display_calls_information(request, ticker):
                 cr.add_call(n)
             call_list.append(cr)
             i = i + 1
-    print(call_list)
     return render(request, 'test_app/calls_info.html', {
         'ticker': ticker,
         'call_list': call_list
@@ -207,10 +205,53 @@ def display_viewed_history(request, username):
 
 
 def puts_information(request, ticker):
-    return render(request, 'test_app/puts_info.html', {
-        'ticker': ticker
-    })
+    i = 0
+    valid_options = 0
+    while i < 7:
+        the_date = datetime.date.today() + datetime.timedelta(days=i)
+        days_put = PutAPI.get_expiring_on(ticker, the_date)
+        if days_put is None:
+            valid = addPuts(ticker, the_date)
+            if valid:
+                valid_options = valid_options + 1
+        else:
+            pull_new_puts_info(ticker, the_date)
+            valid_options = valid_options + 1
+        i += 1
+    if valid_options != 0:
+        return HttpResponseRedirect(reverse('display_puts_information', args=(ticker,)))
+    else:
+        return render(request, 'test_app/stock_info.html', {
+            'ticker': ticker,
+            'value': StockAPI.get(ticker).current_value,
+            'error_message': "There Are No Puts For The Selected Stock"
+        })
 
+
+def display_puts_information(request, ticker):
+    put_list = []
+    i = 0
+    j = -1
+    while i < 7:
+        the_date = datetime.date.today() + datetime.timedelta(days=i)
+        days_put = PutAPI.get_expiring_on(ticker, the_date)
+        if days_put is None:
+            i = i + 1
+            continue
+        else:
+            year = the_date.strftime("%Y")
+            month = the_date.strftime("%m")
+            day = the_date.strftime("%d")
+            string_date = year + '-' + month + '-' + day
+            pr = PutsResultsHolder(string_date)
+            for n in days_put:
+                pr.add_put(n)
+            put_list.append(pr)
+            i = i + 1
+    return render(request, 'test_app/puts_info.html', {
+        'ticker': ticker,
+        'put_list': put_list
+    })
 
 def test_view(request):
         now = datetime.datetime.now()

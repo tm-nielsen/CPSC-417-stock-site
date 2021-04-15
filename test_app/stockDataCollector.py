@@ -50,15 +50,10 @@ def addCalls(ticker, expiry_date):
     asks = calls['ask']
     premiums = calls['lastPrice']
     j = 0
-    print(calls)
     for i in calls:
-        print(j)
-        print(prices[j], bids[j], asks[j], premiums[j])
         CallAPI.put(expiry_date=expiry_date, strike_price=prices[j], bid=bids[j],
                     ask=asks[j], premium=premiums[j], ticker=ticker)
         j = j + 1
-        print("done")
-    print('really done')
 
 
 def pull_new_calls_info(ticker, expiry_date):
@@ -85,6 +80,52 @@ def pull_new_calls_info(ticker, expiry_date):
         CallAPI.update_updatable(current_call, bids[j], asks[j], premiums[j])
         j = j + 1
 
+
+def addPuts(ticker, expiry_date):
+    theStock = yf.Ticker(ticker)
+    year = expiry_date.strftime("%Y")
+    month = expiry_date.strftime("%m")
+    day = expiry_date.strftime("%d")
+    the_date = year + '-' + month + '-' + day
+    try:
+        options = theStock.option_chain(the_date)
+    except ValueError:
+        return True
+    puts = options.puts
+    prices = puts['strike']
+    bids = puts['bid']
+    asks = puts['ask']
+    premiums = puts['lastPrice']
+    j = 0
+    for i in puts:
+        PutAPI.put(expiry_date=expiry_date, strike_price=prices[j], bid=bids[j],
+                    ask=asks[j], premium=premiums[j], ticker=ticker)
+        j = j + 1
+
+
+def pull_new_puts_info(ticker, expiry_date):
+    theStock = yf.Ticker(ticker)
+    year = expiry_date.strftime("%Y")
+    month = expiry_date.strftime("%m")
+    day = expiry_date.strftime("%d")
+    the_date = year + '-' + month + '-' + day
+    try:
+        options = theStock.option_chain(the_date)
+    except ValueError:
+        return
+    puts = options.puts
+    prices = puts['strike']
+    bids = puts['bid']
+    asks = puts['ask']
+    premiums = puts['lastPrice']
+    j = 0
+    for i in puts:
+        current_put = PutAPI.get(expiry_date, prices[j], ticker)
+        if current_put is None:
+            j = j + 1
+            continue
+        PutAPI.update_updatable(current_put, bids[j], asks[j], premiums[j])
+        j = j + 1
 
 
 def addNewExchange(exchangeID, exchangeName):

@@ -242,9 +242,9 @@ class StockAPI:
 
 class PutAPI:
     @staticmethod
-    def get(primary_key):
+    def get(expiry_date, strike_price, ticker):
         try:
-            the_put = Put.Objects.get(pk=primary_key)
+            the_put = Put.objects.get(expiry_date=expiry_date, strike_price=strike_price, ticker=ticker)
         except(KeyError, Put.DoesNotExist):
             return None
         else:
@@ -261,9 +261,24 @@ class PutAPI:
         the_put.delete()
 
     @staticmethod
+    def get_expiring_on(ticker, date):
+        p = Put.objects.filter(ticker=ticker, expiry_date=date)
+        if p.count() == 0:
+            return None
+        else:
+            return p
+
+    @staticmethod
     def getAll():
         u = Put.objects.getAll()
         return u
+
+    @staticmethod
+    def update_updatable(put, bid, ask, premium):
+        put.bid = bid
+        put.ask = ask
+        put.premium = premium
+        put.save()
 
 
 class CallAPI:
