@@ -274,4 +274,3 @@ class Histogram_EntryAPI:
         h = Histogram_Entry(value=value, id=the_id)
         h.save()
         return h
-
