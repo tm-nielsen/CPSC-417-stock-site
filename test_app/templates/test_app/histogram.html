@@ -19,9 +19,7 @@
       $.ajax({
         url: $histogramChart.data("url"),
         success: function (data) {
-
           var ctx = $histogramChart[0].getContext("2d");
-
           new Chart(ctx, {
             type: 'bar',
             data: {
