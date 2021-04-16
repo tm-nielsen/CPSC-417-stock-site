@@ -207,6 +207,7 @@ def add_to_watchlist(request, ticker):
     error_message = ''
     if WatchlistEntryAPI.get(ticker, request.session['username']) is None:
         WatchlistEntryAPI.put(request.session['username'], ticker)
+        error_message = 'Added Successfully'
     else:
         error_message = 'Already On Watchlist'
     return render(request, 'test_app/stock_info.html', {
