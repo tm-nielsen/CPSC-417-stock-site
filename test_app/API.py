@@ -339,29 +339,28 @@ class ValueHistoryAPI:
         vh = Value_History(date=date, value=value, ticker=StockAPI.get(ticker))
         vh.save()
 
-
-
-class HistogramAPI:
     @staticmethod
-    def get(primary_key):
-        try:
-            the_Histogram = Histogram.object.get(pk = primary_key)
-        except(KeyError, Histogram.DoesNotExist):
+    def all_for_ticker(ticker):
+        vh_list = Value_History.objects.filter(ticker=ticker).order_by('date')
+        if vh_list.count == 0:
             return None
         else:
-            return the_Histogram
+            return vh_list
+
+
+
+
+class Histogram_EntryAPI:
+    @staticmethod
+    def get(id):
+        try:
+            he = Histogram_Entry.objects.get(id=id)
+            return he
+        except(KeyError, Histogram_Entry.DoesNotExist):
+            return None
 
     @staticmethod
-    def put(median, quartiles, id):
-        h = Histogram(median = median, quartiles = quartiles, id = id)
+    def put(value, the_id):
+        h = Histogram_Entry(value=value, id=the_id)
         h.save()
 
-    @staticmethod
-    def remove(primary_key):
-        the_Histogram = Histogram.object.get(pk = primary_key)
-        the_Histogram.delete()
-
-    @staticmethod
-    def getAll():
-        u = Histogram.objects.getAll()
-        return u

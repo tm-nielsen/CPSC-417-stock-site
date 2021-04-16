@@ -1,0 +1,54 @@
+<html>
+<head>
+    <title>Title</title>
+</head>
+<body>
+    <form action="{% url 'main_page' %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="Return to Main Page"/>
+    </form>
+    <div id="container" style="width: 75%;">
+        <canvas id="histogram_chart" data-url="{% url 'histogram_chart' ticker %}"></canvas>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <script>
+    $(function () {
+
+      var $histogramChart = $("#histogram_chart");
+      $.ajax({
+        url: $histogramChart.data("url"),
+        success: function (data) {
+
+          var ctx = $histogramChart[0].getContext("2d");
+
+          new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: data.labels,
+              datasets: [{
+                label: 'Value',
+                backgroundColor: 'green',
+                data: data.data
+              }]
+            },
+            options: {
+              responsive: true,
+              legend: {
+                position: 'top',
+              },
+              title: {
+                display: true,
+                text: 'Value Over Time'
+              }
+            }
+          });
+
+        }
+      });
+
+    });
+
+  </script>
+</body>
+</html>

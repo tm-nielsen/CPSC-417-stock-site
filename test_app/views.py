@@ -12,7 +12,9 @@ from .models import Stock, User, Call, Put
 from test_app.API import *
 from datetime import datetime, date, timedelta
 from test_app.StockDataHolders import *
-
+import pandas as pd
+from django.db.models import Sum
+from django.http import JsonResponse
 
 def login_page(request):
     temp = loader.get_template('test_app/loginPage.html')
@@ -197,6 +199,8 @@ def view_selected_stock(request, ticker):
     right_now = datetime.now()
     if ValueHistoryAPI.get(selected_ticker, right_now) is None:
         ValueHistoryAPI.put(right_now, selected_ticker.current_value, ticker)
+        new_history = ValueHistoryAPI.get(selected_ticker, right_now)
+        Histogram_EntryAPI.put(selected_ticker.current_value, new_history)
     return render(request, 'test_app/stock_info.html', {
         'ticker': selected_ticker.ticker,
         'exchange': StockAPI.get(ticker).exchange_id,
@@ -282,16 +286,19 @@ def display_watchlist(request):
 def display_viewed_history(request):
     history_list = ViewedHistoryAPI.get_user_history(request.session['username'])
     results = []
+    to_delete = []
     for i in history_list:
         results.append(i)
     j = 0
     for i in results:
         if j > 9:
-            ViewedHistoryAPI.remove(i)
-            results.remove(i)
+            to_delete.append(i)
             j = j + 1
         else:
             j = j + 1
+    for i in to_delete:
+        ViewedHistoryAPI.remove(i)
+        results.remove(i)
     return render(request, 'test_app/viewed_history.html', {
         'username': request.session['username'],
         'history_list': results
@@ -345,4 +352,23 @@ def display_puts_information(request, ticker):
     return render(request, 'test_app/puts_info.html', {
         'ticker': ticker,
         'put_list': put_list
+    })
+
+
+def display_histogram(request, ticker):
+    return render(request, 'test_app/histogram.html', {
+        'ticker':ticker
+    })
+
+def histogram_chart(request, ticker):
+    val_hists = ValueHistoryAPI.all_for_ticker(StockAPI.get(ticker))
+    vals = []
+    dates = []
+    for i in val_hists:
+        hist_entry = Histogram_EntryAPI.get(i)
+        vals.append(hist_entry.value)
+        dates.append(i.date)
+    return JsonResponse(data={
+        'labels': dates,
+        'data': vals,
     })
