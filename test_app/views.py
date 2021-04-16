@@ -4,6 +4,11 @@ from django.template import loader, Context
 from django.shortcuts import render
 from django.db import models
 from django.views.generic import *
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.serializers import Serializer
+from rest_framework.views import APIView
+
 from test_app.models import *
 import yfinance as yf
 from django.urls import reverse
@@ -15,6 +20,7 @@ from test_app.StockDataHolders import *
 import pandas as pd
 from django.db.models import Sum
 from django.http import JsonResponse
+
 
 def login_page(request):
     temp = loader.get_template('test_app/loginPage.html')
@@ -128,7 +134,6 @@ def save_analysis(request):
     return HttpResponseRedirect(reverse('analyst_main_page'))
 
 
-
 def search_analysis(request):
     selected_analysis = AnalysisAPI.get(request.POST['analysis'])
     if selected_analysis is None:
@@ -158,6 +163,7 @@ def viewed_history_search(request):
     right_now = datetime.now()
     ViewedHistoryAPI.put(right_now, request.session['username'], ticker)
     return HttpResponseRedirect(reverse('view_selected_stock', args=(ticker,)))
+
 
 def searching_ticker(request):
     selected_ticker = StockAPI.get(request.POST['ticker'])
@@ -248,7 +254,7 @@ def calls_information(request, ticker):
             'exchange': StockAPI.get(ticker).exchange_id,
             'stock': StockAPI.get(ticker),
             'error_message': "There Are No Calls For The Selected Stock"
-            })
+        })
 
 
 def display_calls_information(request, ticker):
@@ -357,8 +363,9 @@ def display_puts_information(request, ticker):
 
 def display_histogram(request, ticker):
     return render(request, 'test_app/histogram.html', {
-        'ticker':ticker
+        'ticker': ticker
     })
+
 
 def histogram_chart(request, ticker):
     val_hists = ValueHistoryAPI.all_for_ticker(StockAPI.get(ticker))
@@ -367,8 +374,9 @@ def histogram_chart(request, ticker):
     for i in val_hists:
         hist_entry = Histogram_EntryAPI.get(i)
         vals.append(hist_entry.value)
-        dates.append(i.date)
+        dates.append(i.date.strftime("%m/%d/%Y, %H:%M:%S"))
     return JsonResponse(data={
         'labels': dates,
         'data': vals,
     })
+
