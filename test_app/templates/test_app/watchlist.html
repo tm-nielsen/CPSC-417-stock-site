@@ -18,6 +18,10 @@
             </h3>
                 {{entry.ticker.name}} <br>
                 ${{entry.ticker.current_value}}
+                <form action="{% url 'viewed_history_search' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="submit" name="{{entry.ticker.ticker}}" value="View information for this stock"/>
+                </form>
             <hr>
         {% endfor %}
 </body>
