@@ -164,13 +164,8 @@ class WatchlistEntryAPI:
 
 class ViewedHistoryAPI:
     @staticmethod
-    def get(primary_key):
-        try:
-            vh = Viewed_History.objects.get(pk=primary_key)
-        except(KeyError, Viewed_History.DoesNotExist):
-            return None
-        else:
-            return vh
+    def remove(vh):
+        vh.delete()
 
     @staticmethod
     def put(date_viewed, username, ticker):
@@ -178,9 +173,13 @@ class ViewedHistoryAPI:
         vh.save()
 
     @staticmethod
-    def remove(primary_key):
-        vh = Viewed_History.objects.get(pk=primary_key)
-        vh.delete()
+    def get_user_history(username):
+        try:
+            vh = Viewed_History.objects.filter(username=username).order_by('-date_viewed')
+        except(KeyError, Viewed_History.DoesNotExist):
+            return None
+        else:
+            return vh
 
     @staticmethod
     def getAll():

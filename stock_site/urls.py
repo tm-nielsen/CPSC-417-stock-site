@@ -42,5 +42,6 @@ urlpatterns = [
     path('<str:ticker>/puts_information/', views.puts_information, name='puts_information'),
     path('<str:ticker>/display_calls_information', views.display_calls_information, name='display_calls_information'),
     path('<str:ticker>/display_puts_information', views.display_puts_information, name='display_puts_information'),
-    path('watchlist', views.display_watchlist, name='watchlist')
+    path('watchlist', views.display_watchlist, name='watchlist'),
+    path('viewed_history_search', views.viewed_history_search, name='viewed_history_search')
 ]

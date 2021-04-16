@@ -10,7 +10,7 @@ from django.urls import reverse
 from test_app.stockDataCollector import *
 from .models import Stock, User, Call, Put
 from test_app.API import *
-import datetime
+from datetime import datetime, date, timedelta
 from test_app.StockDataHolders import *
 
 
@@ -119,9 +119,9 @@ def create_analysis(request):
 def save_analysis(request):
     title = request.POST['title']
     description = request.POST['description']
-    date = datetime.date.today()
+    the_date = date.today()
     username = request.session['username']
-    AnalysisAPI.put(description, date, title, username)
+    AnalysisAPI.put(description, the_date, title, username)
     request.session['username'] = username
     return HttpResponseRedirect(reverse('analyst_main_page'))
 
@@ -143,6 +143,20 @@ def search_analysis(request):
         })
 
 
+def viewed_history_search(request):
+    j = 0
+    ticker = ''
+    for i in request.POST:
+        if j == 1:
+            ticker = i
+        else:
+            j = j + 1
+    print(ticker)
+    pullNewStockPrice(ticker)
+    right_now = datetime.now()
+    ViewedHistoryAPI.put(right_now, request.session['username'], ticker)
+    return HttpResponseRedirect(reverse('view_selected_stock', args=(ticker,)))
+
 def searching_ticker(request):
     selected_ticker = StockAPI.get(request.POST['ticker'])
     if selected_ticker is None:
@@ -153,17 +167,20 @@ def searching_ticker(request):
                 'error_message': 'Unable to Find a Matching Ticker'
             })
         selected_ticker = StockAPI.get(request.POST['ticker'])
+        right_now = datetime.now()
+        ViewedHistoryAPI.put(right_now, request.session['username'], request.POST['ticker'])
     else:
         pullNewStockPrice(selected_ticker.ticker)
+        right_now = datetime.now()
+        ViewedHistoryAPI.put(right_now, request.session['username'], request.POST['ticker'])
     return HttpResponseRedirect(reverse('view_selected_stock', args=(selected_ticker.ticker,)))
 
 
 def view_selected_stock(request, ticker):
     selected_ticker = StockAPI.get(ticker)
-    cv = selected_ticker.current_value
     return render(request, 'test_app/stock_info.html', {
         'ticker': selected_ticker.ticker,
-        'value': cv,
+        'stock': selected_ticker,
         'error_message': "",
     })
 
@@ -177,7 +194,7 @@ def add_to_watchlist(request, ticker):
         error_message = 'Already On Watchlist'
     return render(request, 'test_app/stock_info.html', {
         'ticker': selected_ticker.ticker,
-        'value': selected_ticker.current_value,
+        'stock': selected_ticker,
         'error_message': error_message,
         'username': request.session['username'],
     })
@@ -187,7 +204,7 @@ def calls_information(request, ticker):
     i = 0
     valid_options = 0
     while i < 7:
-        the_date = datetime.date.today() + datetime.timedelta(days=i)
+        the_date = date.today() + timedelta(days=i)
         days_call = CallAPI.get_expiring_on(ticker, the_date)
         if days_call is None:
             valid = addCalls(ticker, the_date)
@@ -202,7 +219,7 @@ def calls_information(request, ticker):
     else:
         return render(request, 'test_app/stock_info.html', {
             'ticker': ticker,
-            'value': StockAPI.get(ticker).current_value,
+            'stock': StockAPI.get(ticker),
             'error_message': "There Are No Calls For The Selected Stock"
             })
 
@@ -211,7 +228,7 @@ def display_calls_information(request, ticker):
     call_list = []
     i = 0
     while i < 7:
-        the_date = datetime.date.today() + datetime.timedelta(days=i)
+        the_date = date.today() + timedelta(days=i)
         days_call = CallAPI.get_expiring_on(ticker, the_date)
         if days_call is None:
             i = i + 1
@@ -240,8 +257,20 @@ def display_watchlist(request):
 
 
 def display_viewed_history(request):
+    history_list = ViewedHistoryAPI.get_user_history(request.session['username'])
+    results = []
+    for i in history_list:
+        results.append(i)
+    j = 0
+    for i in results:
+        if j > 9:
+            results.remove(i)
+            ViewedHistoryAPI.remove(i)
+        else:
+            j = j + 1
     return render(request, 'test_app/viewed_history.html', {
-        'username': request.session['username']
+        'username': request.session['username'],
+        'history_list': results
     })
 
 
@@ -249,7 +278,7 @@ def puts_information(request, ticker):
     i = 0
     valid_options = 0
     while i < 7:
-        the_date = datetime.date.today() + datetime.timedelta(days=i)
+        the_date = date.today() + timedelta(days=i)
         days_put = PutAPI.get_expiring_on(ticker, the_date)
         if days_put is None:
             valid = addPuts(ticker, the_date)
@@ -264,7 +293,7 @@ def puts_information(request, ticker):
     else:
         return render(request, 'test_app/stock_info.html', {
             'ticker': ticker,
-            'value': StockAPI.get(ticker).current_value,
+            'stock': StockAPI.get(ticker),
             'error_message': "There Are No Puts For The Selected Stock"
         })
 
@@ -273,7 +302,7 @@ def display_puts_information(request, ticker):
     put_list = []
     i = 0
     while i < 7:
-        the_date = datetime.date.today() + datetime.timedelta(days=i)
+        the_date = date.today() + timedelta(days=i)
         days_put = PutAPI.get_expiring_on(ticker, the_date)
         if days_put is None:
             i = i + 1
