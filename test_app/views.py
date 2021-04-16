@@ -194,6 +194,9 @@ def user_search_analysis(request):
 
 def view_selected_stock(request, ticker):
     selected_ticker = StockAPI.get(ticker)
+    right_now = datetime.now()
+    if ValueHistoryAPI.get(selected_ticker, right_now) is None:
+        ValueHistoryAPI.put(right_now, selected_ticker.current_value, ticker)
     return render(request, 'test_app/stock_info.html', {
         'ticker': selected_ticker.ticker,
         'exchange': StockAPI.get(ticker).exchange_id,
@@ -284,8 +287,9 @@ def display_viewed_history(request):
     j = 0
     for i in results:
         if j > 9:
-            results.remove(i)
             ViewedHistoryAPI.remove(i)
+            results.remove(i)
+            j = j + 1
         else:
             j = j + 1
     return render(request, 'test_app/viewed_history.html', {

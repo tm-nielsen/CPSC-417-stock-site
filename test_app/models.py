@@ -45,8 +45,8 @@ class Call(models.Model):
     class Meta:
         unique_together = (("expiry_date", "strike_price", "ticker"),)
 
+
 class Value_History(models.Model):
-    id = models.IntegerField(primary_key=True)
     date = models.DateTimeField()
     value = models.FloatField()
     ticker = models.ForeignKey(

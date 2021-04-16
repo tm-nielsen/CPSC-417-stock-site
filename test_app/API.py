@@ -327,28 +327,18 @@ class CallAPI:
 
 class ValueHistoryAPI:
     @staticmethod
-    def get(primary_key):
+    def get(ticker, date):
         try:
-            the_VHist = Value_History.objects.get(pk=primary_key)
+            vh = Value_History.objects.get(ticker=ticker, date=date)
+            return vh
         except(KeyError, Value_History.DoesNotExist):
             return None
-        else:
-            return the_VHist
 
     @staticmethod
-    def put(id, date, value, ticker):
-        vh = Value_History(id = id, date = date, value = value, ticker = StockAPI.get(ticker))
+    def put(date, value, ticker):
+        vh = Value_History(date=date, value=value, ticker=StockAPI.get(ticker))
         vh.save()
 
-    @staticmethod
-    def remove(primary_key):
-        the_VHist = Value_History.objects.get(pk = primary_key)
-        the_VHist.delete()
-
-    @staticmethod
-    def getAll():
-        u = Value_History.objects.getAll()
-        return u
 
 
 class HistogramAPI:
