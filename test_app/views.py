@@ -180,6 +180,7 @@ def view_selected_stock(request, ticker):
     selected_ticker = StockAPI.get(ticker)
     return render(request, 'test_app/stock_info.html', {
         'ticker': selected_ticker.ticker,
+        'exchange': StockAPI.get(ticker).exchange_id,
         'stock': selected_ticker,
         'error_message': "",
     })
@@ -194,6 +195,7 @@ def add_to_watchlist(request, ticker):
         error_message = 'Already On Watchlist'
     return render(request, 'test_app/stock_info.html', {
         'ticker': selected_ticker.ticker,
+        'exchange': StockAPI.get(ticker).exchange_id,
         'stock': selected_ticker,
         'error_message': error_message,
         'username': request.session['username'],
@@ -219,6 +221,7 @@ def calls_information(request, ticker):
     else:
         return render(request, 'test_app/stock_info.html', {
             'ticker': ticker,
+            'exchange': StockAPI.get(ticker).exchange_id,
             'stock': StockAPI.get(ticker),
             'error_message': "There Are No Calls For The Selected Stock"
             })
@@ -293,6 +296,7 @@ def puts_information(request, ticker):
     else:
         return render(request, 'test_app/stock_info.html', {
             'ticker': ticker,
+            'exchange': StockAPI.get(ticker).exchange_id,
             'stock': StockAPI.get(ticker),
             'error_message': "There Are No Puts For The Selected Stock"
         })
