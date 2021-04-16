@@ -17,7 +17,7 @@
                 {{entry.ticker.ticker}}
             </h3>
                 {{entry.ticker.name}} <br>
-                ${{entry.ticker.current_value}}
+                <span class="money">${{entry.ticker.current_value}}</span><br><br>
                 <form action="{% url 'viewed_history_search' %}" method="POST">
                     {% csrf_token %}
                     <input type="submit" name="{{entry.ticker.ticker}}" value="View information for this stock"/>
