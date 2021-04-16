@@ -1,6 +1,9 @@
+{% load static %}
+
 <html>
 <head>
     <title>Title</title>
+    <link rel="stylesheet" href="{% static 'test_app/histogram.css' %}">
 </head>
 <body>
     <form action="{% url 'main_page' %}" method="POST">
