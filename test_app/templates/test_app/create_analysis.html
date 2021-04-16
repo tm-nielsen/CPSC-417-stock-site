@@ -1,6 +1,9 @@
+{% load static %}
+
 <html>
 <head>
     <title>New Analysis</title>
+    <link rel="stylesheet" href="{% static 'test_app/style.css' %}">
 </head>
 <body>
     <h1>Create New Analysis</h1><br/>
@@ -10,7 +13,7 @@
         <input type="text" name="title"/>
         <p>Description</p>
         <input type="text" name="description"/><br/>
-        <input type="submit" name="submit" value="create"/><br/>
+        <input type="submit" name="submit" value="create" class="submit"/><br/>
     </form>
 </body>
 </html>
