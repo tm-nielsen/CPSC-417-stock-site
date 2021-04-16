@@ -3,18 +3,30 @@
 <html>
 <head>
     <title>Stock Information</title>
-    <link rel="stylesheet" href="{% static 'test_app/style.css' %}">
+    <link rel="stylesheet" href="{% static 'test_app/stockInfo.css' %}">
 </head>
 <body>
     <h1>Stock information</h1>
-    <h2>{{error_message}}</h2>
+    <form action="{% url 'main_page' %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="Return to Main Page"/>
+    </form>
+    <form action="{% url 'display_histogram' ticker %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="View Histogram"/>
+    </form>
+    <h2 class="err">{{error_message}}</h2>
     <h2>{{ticker}}</h2>
-    <h3>{{value}}</h3>
-    <form action="{% url 'calls_information' ticker %}" method="POST">
+    <h3>{{stock.name}}</h3>
+    <h3 class="money">${{stock.current_value}}</h3>
+    <h5>Ex Dividend Date: {{stock.ex_dividend_date}} |
+        Dividend Amount: <span class="money">${{stock.dividend_amount}}</span></h5>
+    <h5>Exchange: {{exchange.exchange_id}} | Exchange Timezone: {{exchange.exchange_timezone}}</h5>
+    <form action="{% url 'calls_information' ticker %}" method="POST" id="calls">
         {% csrf_token %}
         <input type="submit" value="View Calls">
     </form>
-    <form action="{% url 'puts_information' ticker %}" method="POST">
+    <form action="{% url 'puts_information' ticker %}" method="POST" id="puts">
         {% csrf_token %}
         <input type="submit" value="View Puts">
     </form>

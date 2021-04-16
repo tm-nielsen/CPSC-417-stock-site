@@ -49,8 +49,8 @@ def addCalls(ticker, expiry_date):
     the_date = year + '-' + month + '-' + day
     try:
         options = theStock.option_chain(the_date)
-    except ValueError:
-        return True
+    except (ValueError, KeyError, IndexError):
+        return False
     calls = options.calls
     prices = calls['strike']
     bids = calls['bid']
@@ -64,6 +64,7 @@ def addCalls(ticker, expiry_date):
             j = j + 1
         except KeyError:
             j = j + 1
+    return True
 
 
 def pull_new_calls_info(ticker, expiry_date):
@@ -102,8 +103,8 @@ def addPuts(ticker, expiry_date):
     the_date = year + '-' + month + '-' + day
     try:
         options = theStock.option_chain(the_date)
-    except ValueError:
-        return True
+    except (ValueError, KeyError, IndexError):
+        return False
     puts = options.puts
     prices = puts['strike']
     bids = puts['bid']
@@ -117,6 +118,7 @@ def addPuts(ticker, expiry_date):
             j = j + 1
         except KeyError:
             j = j + 1
+    return True
 
 
 def pull_new_puts_info(ticker, expiry_date):

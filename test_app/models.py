@@ -45,8 +45,8 @@ class Call(models.Model):
     class Meta:
         unique_together = (("expiry_date", "strike_price", "ticker"),)
 
+
 class Value_History(models.Model):
-    id = models.IntegerField(primary_key=True)
     date = models.DateTimeField()
     value = models.FloatField()
     ticker = models.ForeignKey(
@@ -56,9 +56,8 @@ class Value_History(models.Model):
     class Meta:
         unique_together = (('date','ticker'))
 
-class Histogram(models.Model):
-    median = models.FloatField()
-    quartiles = models.FloatField()
+class Histogram_Entry(models.Model):
+    value = models.FloatField()
     id = models.OneToOneField(
         'Value_History',
         on_delete=models.CASCADE,

@@ -7,6 +7,10 @@
 </head>
 <body>
     <h1>{{ticker}} Calls Expiring Within The Next Seven Days</h1>
+    <form action="{% url 'main_page' %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="Return to Main Page"/>
+    </form>
     {% for entry in call_list %}
         <h3>{{entry.get_date}}</h3>
         <table>

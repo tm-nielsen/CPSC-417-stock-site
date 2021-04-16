@@ -5,9 +5,20 @@
 <html>
 <head>
     <title>Viewed History</title>
-    <link rel="stylesheet" href="{% static 'test_app/style.css' %}">
+    <link rel="stylesheet" href="{% static 'test_app/history.css' %}">
 </head>
 <body>
-    <p>Coming Soon</p>
+    <h2>Last 10 Searches for {{username}}</h2>
+    <form action="{% url 'main_page' %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="Return to Main Page"/>
+    </form>
+    {% for record in history_list %}
+        <h5> <em>{{record.ticker.ticker}}</em> | {{record.date_viewed}}</h5>
+            <form action="{% url 'viewed_history_search' %}" method="POST">
+                {% csrf_token %}
+                <input type="submit" name="{{record.ticker.ticker}}" value="View stock info" class="view"/>
+            </form>
+    {% endfor %}
 </body>
 </html>

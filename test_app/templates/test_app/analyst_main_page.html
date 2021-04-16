@@ -17,7 +17,7 @@
     <form action="{% url 'search_analysis' %}" method="POST">
         {% csrf_token %}
         <input type="text" name="analysis"/><br/>
-        <input type="submit" name="submit" value="Search"/><br/>
+        <input type="submit" name="submit" value="Search" class="submit"/><br/>
     </form>
 </body>
 </html>

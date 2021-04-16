@@ -7,13 +7,21 @@
 </head>
 <body>
     <h1>My Watchlist</h1>
+    <form action="{% url 'main_page' %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="Return to Main Page"/>
+    </form>
     <hr>
         {% for entry in watchlist %}
             <h3>
                 {{entry.ticker.ticker}}
             </h3>
                 {{entry.ticker.name}} <br>
-                {{entry.ticker.current_value}}
+                <span class="money">${{entry.ticker.current_value}}</span><br><br>
+                <form action="{% url 'viewed_history_search' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="submit" name="{{entry.ticker.ticker}}" value="View information for this stock"/>
+                </form>
             <hr>
         {% endfor %}
 </body>

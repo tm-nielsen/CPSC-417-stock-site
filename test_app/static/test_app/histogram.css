@@ -1,0 +1,32 @@
+body{
+    background-color: black;
+    color: rgb(155, 155, 155);
+    font-family: monospace;
+    font-size: xx-large;
+}
+
+input{
+    background-color:rgb(105, 105, 105);
+    color:rgb(37, 37, 37);
+    font-weight: bold;
+    font-size: large;
+}
+
+input[type=submit]{
+    border-width: 4px;
+    border-style:outset;
+    margin-top: 20px;
+}
+
+input:hover{
+    background-color: rgb(220, 220, 220);
+}
+
+input:focus{
+    background-color: white;
+    color:gray;
+}
+
+.money{
+    color: rgb(90, 170, 80);
+}
