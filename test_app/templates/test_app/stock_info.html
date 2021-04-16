@@ -16,6 +16,7 @@
     <h3>{{stock.name}}</h3>
     <h3>${{stock.current_value}}</h3>
     <h5>Ex Dividend Date: {{stock.ex_dividend_date}} | Dividend Amount: ${{stock.dividend_amount}}</h5>
+    <h5>Exchange: {{exchange.exchange_id}} | Exchange Timezone: {{exchange.exchange_timezone}}</h5>
     <form action="{% url 'calls_information' ticker %}" method="POST">
         {% csrf_token %}
         <input type="submit" value="View Calls">

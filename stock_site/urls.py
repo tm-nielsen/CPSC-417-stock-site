@@ -34,6 +34,7 @@ urlpatterns = [
     path('add_to_watchlist/', views.add_to_watchlist, name='add_to_watchlist'),
     path('viewed_history/', views.display_viewed_history, name='viewed_history'),
     path('main_page/', views.main_page, name='main_page'),
+    path('main_page/user_search_analysis', views.user_search_analysis, name='user_search_analysis'),
     path('analyst_main_page', views.analyst_main_page, name='analyst_main_page'),
     path('analyst_main_page/create_analysis', views.create_analysis, name='create_analysis'),
     path('analyst_main_page/create_analysis/save_analysis', views.save_analysis, name='save_analysis'),

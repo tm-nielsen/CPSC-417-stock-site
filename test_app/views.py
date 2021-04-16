@@ -176,6 +176,22 @@ def searching_ticker(request):
     return HttpResponseRedirect(reverse('view_selected_stock', args=(selected_ticker.ticker,)))
 
 
+def user_search_analysis(request):
+    selected_analysis = AnalysisAPI.get(request.POST['analysis'])
+    if selected_analysis is None:
+        return render(request, 'test_app/main_page.html', {
+            'username': request.session['username'],
+            'error_message': 'Analysis not found. Please try again'
+        })
+    else:
+        return render(request, 'test_app/view_analysis.html', {
+            'title': selected_analysis.title,
+            'author': selected_analysis.username.username,
+            'date': selected_analysis.date,
+            'description': selected_analysis.description
+        })
+
+
 def view_selected_stock(request, ticker):
     selected_ticker = StockAPI.get(ticker)
     return render(request, 'test_app/stock_info.html', {

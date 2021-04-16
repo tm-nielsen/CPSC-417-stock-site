@@ -14,6 +14,12 @@
         <input type="text" name="ticker"/>
         <input type="submit" name="submit"/><br/>
     </form>
+    <h3>Search for a Analysis</h3>
+    <form action="{% url 'user_search_analysis' %}" method="POST">
+        {% csrf_token %}
+        <input type="text" name="analysis"/>
+        <input type="submit" name="submit" value="Search"/><br/>
+    </form>
     <h3>View My Watchlist</h3>
     <form action="{% url 'watchlist' %}" method="POST">
         {% csrf_token %}

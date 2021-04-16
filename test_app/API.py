@@ -189,13 +189,12 @@ class ViewedHistoryAPI:
 
 class ExchangeAPI:
     @staticmethod
-    def get(primary_key):
+    def get(exchange_id):
         try:
-            e = Exchange.objects.get(pk=primary_key)
+            e = Exchange.objects.get(exchange_id=exchange_id)
+            return e
         except(KeyError, Exchange.DoesNotExist):
             return None
-        else:
-            return e
 
     @staticmethod
     def put(exchange_timezone, exchange_id):
