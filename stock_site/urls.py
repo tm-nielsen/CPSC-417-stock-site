@@ -46,5 +46,16 @@ urlpatterns = [
     path('watchlist', views.display_watchlist, name='watchlist'),
     path('viewed_history_search', views.viewed_history_search, name='viewed_history_search'),
     path('<str:ticker>/display_histogram', views.display_histogram, name='display_histogram'),
-    path('<str:ticker>/histogram_chart', views.histogram_chart, name='histogram_chart')
+    path('<str:ticker>/histogram_chart', views.histogram_chart, name='histogram_chart'),
+    path('users/<str:pk>', views.User.as_view()),
+    path('analyst/<str:pk>', views.Analyst.as_view()),
+    path('analysis/<str:title>/<str:username>', views.Analysis.as_view()),
+    path('exchange/<str:pk>', views.Exchange.as_view()),
+    path('stock/<str:pk>', views.Stock.as_view()),
+    path('put/<str:ed>/<str:sp>/<str:t>', views.Put.as_view()),
+    path('call/<str:ed>/<str:sp>/<str:t>', views.Call.as_view()),
+    path('valuehistory/<str:d>/<str:ticker>', views.ValueHistory.as_view()),
+    path('histogramentry/<str:d>/<str:ticker>', views.HistogramEntry.as_view()),
+    path('viewedhistory/<str:d>/<str:username>/<str:ticker>', views.ViewedHistory.as_view()),
+    path('watchlistentry/<str:ticker>/<str:username>', views.WatchlistEntry.as_view()),
 ]
