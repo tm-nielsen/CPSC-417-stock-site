@@ -31,7 +31,7 @@ class User_(APIView):
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
-        user = User.objects.filter(pk=pk).first()
+        user = User.objects.get(pk=pk)
         serializer = UserSerializer(user, data=request.data)
         print(user)
         if serializer.is_valid():
@@ -46,14 +46,28 @@ class User_(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class User__(APIView):
+
+    def post(self, request, format=None):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response (serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, format=None):
+        users = User.objects.all()
+        serializer = UserSerializer(users,many=True)
+        return Response(serializer.data)
+
 class Analyst_(APIView):
     def get(self, request, pk, format=None):
         a = Analyst.objects.get(pk=pk)
         serializer = AnalystSerializer(a)
         return Response(serializer.data)
 
-    def post(self, request, pk, format=None):
-        a = Analyst.objects.filter(pk=pk).first()
+    def put(self, request, pk, format=None):
+        a = Analyst.objects.get(pk=pk).first()
         serializer = AnalystSerializer(a, data=request.data)
         print(a)
         if serializer.is_valid():
@@ -68,14 +82,29 @@ class Analyst_(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class Analyst__(APIView):
+
+    def post(self, request, format=None):
+        serializer = AnalystSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response (serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, format=None):
+        analyst = Analyst.objects.all()
+        serializer = AnalystSerializer(analyst,many=True)
+        return Response(serializer.data)
+
+
 class Analysis_(APIView):
     def get(self, request, title, username, format=None):
         a = Analysis.objects.get(title=title, username=Analyst.objects.get(pk=username))
         serializer = AnalysisSerializer(a)
         return Response(serializer.data)
 
-    def post(self, request, title, username, format=None):
-        a = Analysis.objects.filter(title=title, username=Analyst.objects.get(pk=username)).first()
+    def put(self, request, title, username, format=None):
+        a = Analysis.objects.get(title=title, username=Analyst.objects.get(pk=username)).first()
         serializer = AnalysisSerializer(a, data=request.data)
         print(a)
         if serializer.is_valid():
@@ -90,14 +119,29 @@ class Analysis_(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class Analysis__(APIView):
+
+    def post(self, request, format=None):
+        serializer = AnalysisSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response (serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, format=None):
+        analysis = Analysis.objects.all()
+        serializer = AnalysisSerializer(analysis,many=True)
+        return Response(serializer.data)
+
+
 class Exchange_(APIView):
     def get(self, request, pk, format=None):
         e = Exchange.objects.get(pk=pk)
         serializer = ExchangeSerializer(e)
         return Response(serializer.data)
 
-    def post(self, request, pk, format=None):
-        e = Exchange.objects.filter(pk=pk).first()
+    def put(self, request, pk, format=None):
+        e = Exchange.objects.get(pk=pk).first()
         serializer = ExchangeSerializer(e, data=request.data)
         print(e)
         if serializer.is_valid():
@@ -112,14 +156,28 @@ class Exchange_(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class Exchange__(APIView):
+
+    def post(self, request, format=None):
+        serializer = ExchangeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response (serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, format=None):
+        exchange = Exchange.objects.all()
+        serializer = ExchangeSerializer(exchange,many=True)
+        return Response(serializer.data)
+
 class Stock_(APIView):
     def get(self, request, pk, format=None):
         s = Stock.objects.get(pk=pk)
         serializer = StockSerializer(s)
         return Response(serializer.data)
 
-    def post(self, request, pk, format=None):
-        s = Stock.objects.filter(pk=pk).first()
+    def put(self, request, pk, format=None):
+        s = Stock.objects.get(pk=pk).first()
         serializer = StockSerializer(s, data=request.data)
         print(s)
         if serializer.is_valid():
@@ -134,14 +192,29 @@ class Stock_(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class Stock__(APIView):
+
+    def post(self, request, format=None):
+        serializer = StockSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response (serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, format=None):
+        stock = Stock.objects.all()
+        serializer = StockSerializer(stock,many=True)
+        return Response(serializer.data)
+
+
 class Put_(APIView):
     def get(self, request, ed, sp, t, format=None):
         p = Put.objects.get(expiry_date=ed, strike_price=sp, ticker=Stock.objects.get(pk=t))
         serializer = PutSerializer(p)
         return Response(serializer.data)
 
-    def post(self, request, ed, sp, t, format=None):
-        p = Put.objects.filter(expiry_date=ed, strike_price=sp, ticker=Stock.objects.get(pk=t)).first()
+    def put(self, request, ed, sp, t, format=None):
+        p = Put.objects.get(expiry_date=ed, strike_price=sp, ticker=Stock.objects.get(pk=t)).first()
         serializer = PutSerializer(p, data=request.data)
         print(p)
         if serializer.is_valid():
@@ -156,14 +229,29 @@ class Put_(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class Put__(APIView):
+
+    def post(self, request, format=None):
+        serializer = PutSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response (serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, format=None):
+        put = Put.objects.all()
+        serializer = PutSerializer(put,many=True)
+        return Response(serializer.data)
+
+
 class Call_(APIView):
     def get(self, request, ed, sp, t, format=None):
         c = Call.objects.get(expiry_date=ed, strike_price=sp, ticker=Stock.objects.get(pk=t))
         serializer = CallSerializer(c)
         return Response(serializer.data)
 
-    def post(self, request, ed, sp, t, format=None):
-        c = Call.objects.filter(expiry_date=ed, strike_price=sp, ticker=Stock.objects.get(pk=t)).first()
+    def put(self, request, ed, sp, t, format=None):
+        c = Call.objects.get(expiry_date=ed, strike_price=sp, ticker=Stock.objects.get(pk=t)).first()
         serializer = CallSerializer(c, data=request.data)
         print(c)
         if serializer.is_valid():
@@ -178,15 +266,30 @@ class Call_(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class Call__(APIView):
+
+    def post(self, request, format=None):
+        serializer = CallSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response (serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, format=None):
+        call = Call.objects.all()
+        serializer = CallSerializer(call,many=True)
+        return Response(serializer.data)
+
+
 class ValueHistory_(APIView):
     def get(self, request, d, ticker, format=None):
         vh = Value_History.objects.get(date=d, ticker=Stock.objects.get(pk=ticker))
         serializer = ValueHistorySerializer(vh)
         return Response(serializer.data)
 
-    def post(self, request, d, ticker, format=None):
-        vh = Value_History.objects.filter(date=d, ticker=Stock.objects.get(pk=ticker)).first()
-        serializer = UserSerializer(vh, data=request.data)
+    def put(self, request, d, ticker, format=None):
+        vh = Value_History.objects.get(date=d, ticker=Stock.objects.get(pk=ticker)).first()
+        serializer = ValueHistorySerializer(vh, data=request.data)
         print(vh)
         if serializer.is_valid():
             print(request.data)
@@ -200,14 +303,29 @@ class ValueHistory_(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class ValueHistory__(APIView):
+
+    def post(self, request, format=None):
+        serializer = ValueHistorySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response (serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, format=None):
+        vh = Value_History.objects.all()
+        serializer = ValueHistorySerializer(vh,many=True)
+        return Response(serializer.data)
+
+
 class HistogramEntry_(APIView):
     def get(self, request, d, ticker, format=None):
         he = Histogram_Entry.objects.get(id=Value_History.objects.get(date=d, ticker=Stock.objects.get(pk=ticker)))
         serializer = HistogramEntrySerializer(he)
         return Response(serializer.data)
 
-    def post(self, request, d, ticker, format=None):
-        he = Histogram_Entry.objects.filter(
+    def put(self, request, d, ticker, format=None):
+        he = Histogram_Entry.objects.get(
             id=Value_History.objects.get(date=d, ticker=Stock.objects.get(pk=ticker))).first()
         serializer = HistogramEntrySerializer(he, data=request.data)
         print(he)
@@ -223,6 +341,21 @@ class HistogramEntry_(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class HistogramEntry__(APIView):
+
+    def post(self, request, format=None):
+        serializer = HistogramEntrySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response (serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, format=None):
+        hist = Value_History.objects.all()
+        serializer = HistogramEntrySerializer(hist,many=True)
+        return Response(serializer.data)
+
+
 class ViewedHistory_(APIView):
     def get(self, request, d, username, ticker, format=None):
         vh = Viewed_History.objects.get(date_viewed=d, username=User.objects.get(pk=username),
@@ -230,8 +363,8 @@ class ViewedHistory_(APIView):
         serializer = ViewedHistorySerializer(vh)
         return Response(serializer.data)
 
-    def post(self, request, d, username, ticker, format=None):
-        vh = Viewed_History.objects.filter(date_viewed=d, username=User.objects.get(pk=username),
+    def put(self, request, d, username, ticker, format=None):
+        vh = Viewed_History.objects.get(date_viewed=d, username=User.objects.get(pk=username),
                                           ticker=Stock.objects.get(pk=ticker)).first()
         serializer = ViewedHistorySerializer(vh, data=request.data)
         print(vh)
@@ -248,14 +381,29 @@ class ViewedHistory_(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class ViewedHistory__(APIView):
+
+    def post(self, request, format=None):
+        serializer = ViewedHistorySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response (serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, format=None):
+        viewed = Viewed_History.objects.all()
+        serializer = ViewedHistorySerializer(viewed,many=True)
+        return Response(serializer.data)
+
+
 class WatchlistEntry_(APIView):
     def get(self, request, ticker, username, format=None):
         we = Watchlist_Entry.objects.get(ticker=Stock.objects.get(pk=ticker), username=User.objects.get(pk=username))
         serializer = WatchlistEntrySerializer(we)
         return Response(serializer.data)
 
-    def post(self, request, ticker, username, format=None):
-        we = Watchlist_Entry.objects.filter(ticker=Stock.objects.get(pk=ticker),
+    def put(self, request, ticker, username, format=None):
+        we = Watchlist_Entry.objects.get(ticker=Stock.objects.get(pk=ticker),
                                             username=User.objects.get(pk=username)).first()
         serializer = WatchlistEntrySerializer(we, data=request.data)
         print(we)
@@ -271,6 +419,19 @@ class WatchlistEntry_(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class WatchlistEntry__(APIView):
+
+    def post(self, request, format=None):
+        serializer = WatchlistEntrySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response (serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, format=None):
+        entry = Watchlist_Entry.objects.all()
+        serializer = WatchlistEntrySerializer(entry,many=True)
+        return Response(serializer.data)
 # ----------------------------------------------------------------------------------------------------------------------
 
 def login_page(request):

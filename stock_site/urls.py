@@ -47,6 +47,8 @@ urlpatterns = [
     path('viewed_history_search', views.viewed_history_search, name='viewed_history_search'),
     path('<str:ticker>/display_histogram', views.display_histogram, name='display_histogram'),
     path('<str:ticker>/histogram_chart', views.histogram_chart, name='histogram_chart'),
+
+    #Postman (pk)
     path('users/<str:pk>', views.User_.as_view()),
     path('analyst/<str:pk>', views.Analyst_.as_view()),
     path('analysis/<str:title>/<str:username>', views.Analysis_.as_view()),
@@ -58,4 +60,17 @@ urlpatterns = [
     path('histogramentry/<str:d>/<str:ticker>', views.HistogramEntry_.as_view()),
     path('viewedhistory/<str:d>/<str:username>/<str:ticker>', views.ViewedHistory_.as_view()),
     path('watchlistentry/<str:ticker>/<str:username>', views.WatchlistEntry_.as_view()),
+
+    #Postman
+    path('users', views.User__.as_view()),
+    path('analyst', views.Analyst__.as_view()),
+    path('analysis', views.Analysis__.as_view()),
+    path('exchange', views.Exchange__.as_view()),
+    path('stock', views.Stock__.as_view()),
+    path('put', views.Put__.as_view()),
+    path('call', views.Call__.as_view()),
+    path('valuehistory', views.ValueHistory__.as_view()),
+    path('histogramentry', views.HistogramEntry__.as_view()),
+    path('viewedhistory', views.ViewedHistory__.as_view()),
+    path('watchlistentry', views.WatchlistEntry__.as_view()),
 ]
