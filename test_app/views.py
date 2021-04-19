@@ -67,7 +67,7 @@ class Analyst_(APIView):
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
-        a = Analyst.objects.get(pk=pk).first()
+        a = Analyst.objects.get(pk=pk)
         serializer = AnalystSerializer(a, data=request.data)
         print(a)
         if serializer.is_valid():
@@ -104,7 +104,7 @@ class Analysis_(APIView):
         return Response(serializer.data)
 
     def put(self, request, title, username, format=None):
-        a = Analysis.objects.get(title=title, username=Analyst.objects.get(pk=username)).first()
+        a = Analysis.objects.get(title=title, username=Analyst.objects.get(pk=username))
         serializer = AnalysisSerializer(a, data=request.data)
         print(a)
         if serializer.is_valid():
@@ -141,7 +141,7 @@ class Exchange_(APIView):
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
-        e = Exchange.objects.get(pk=pk).first()
+        e = Exchange.objects.get(pk=pk)
         serializer = ExchangeSerializer(e, data=request.data)
         print(e)
         if serializer.is_valid():
@@ -177,7 +177,7 @@ class Stock_(APIView):
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
-        s = Stock.objects.get(pk=pk).first()
+        s = Stock.objects.get(pk=pk)
         serializer = StockSerializer(s, data=request.data)
         print(s)
         if serializer.is_valid():
@@ -209,12 +209,12 @@ class Stock__(APIView):
 
 class Put_(APIView):
     def get(self, request, ed, sp, t, format=None):
-        p = Put.objects.get(expiry_date=ed, strike_price=sp, ticker=Stock.objects.get(pk=t))
+        p = Put.objects.get(expiry_date=ed, strike_price=float(sp), ticker=Stock.objects.get(pk=t))
         serializer = PutSerializer(p)
         return Response(serializer.data)
 
     def put(self, request, ed, sp, t, format=None):
-        p = Put.objects.get(expiry_date=ed, strike_price=sp, ticker=Stock.objects.get(pk=t)).first()
+        p = Put.objects.get(expiry_date=ed, strike_price=float(sp), ticker=Stock.objects.get(pk=t))
         serializer = PutSerializer(p, data=request.data)
         print(p)
         if serializer.is_valid():
@@ -224,7 +224,7 @@ class Put_(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, ed, sp, t, format=None):
-        p = Put.objects.filter(expiry_date=ed, strike_price=sp, ticker=Stock.objects.get(pk=t))
+        p = Put.objects.filter(expiry_date=ed, strike_price=float(sp), ticker=Stock.objects.get(pk=t))
         p.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -246,12 +246,12 @@ class Put__(APIView):
 
 class Call_(APIView):
     def get(self, request, ed, sp, t, format=None):
-        c = Call.objects.get(expiry_date=ed, strike_price=sp, ticker=Stock.objects.get(pk=t))
+        c = Call.objects.get(expiry_date=ed, strike_price=float(sp), ticker=Stock.objects.get(pk=t))
         serializer = CallSerializer(c)
         return Response(serializer.data)
 
     def put(self, request, ed, sp, t, format=None):
-        c = Call.objects.get(expiry_date=ed, strike_price=sp, ticker=Stock.objects.get(pk=t)).first()
+        c = Call.objects.get(expiry_date=ed, strike_price=float(sp), ticker=Stock.objects.get(pk=t))
         serializer = CallSerializer(c, data=request.data)
         print(c)
         if serializer.is_valid():
@@ -261,7 +261,7 @@ class Call_(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, ed, sp, t, format=None):
-        c = Call.objects.filter(expiry_date=ed, strike_price=sp, ticker=Stock.objects.get(pk=t))
+        c = Call.objects.filter(expiry_date=ed, strike_price=float(sp), ticker=Stock.objects.get(pk=t))
         c.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -288,7 +288,7 @@ class ValueHistory_(APIView):
         return Response(serializer.data)
 
     def put(self, request, d, ticker, format=None):
-        vh = Value_History.objects.get(date=d, ticker=Stock.objects.get(pk=ticker)).first()
+        vh = Value_History.objects.get(date=d, ticker=Stock.objects.get(pk=ticker))
         serializer = ValueHistorySerializer(vh, data=request.data)
         print(vh)
         if serializer.is_valid():
@@ -326,7 +326,7 @@ class HistogramEntry_(APIView):
 
     def put(self, request, d, ticker, format=None):
         he = Histogram_Entry.objects.get(
-            id=Value_History.objects.get(date=d, ticker=Stock.objects.get(pk=ticker))).first()
+            id=Value_History.objects.get(date=d, ticker=Stock.objects.get(pk=ticker)))
         serializer = HistogramEntrySerializer(he, data=request.data)
         print(he)
         if serializer.is_valid():
@@ -365,7 +365,7 @@ class ViewedHistory_(APIView):
 
     def put(self, request, d, username, ticker, format=None):
         vh = Viewed_History.objects.get(date_viewed=d, username=User.objects.get(pk=username),
-                                          ticker=Stock.objects.get(pk=ticker)).first()
+                                          ticker=Stock.objects.get(pk=ticker))
         serializer = ViewedHistorySerializer(vh, data=request.data)
         print(vh)
         if serializer.is_valid():
@@ -404,7 +404,7 @@ class WatchlistEntry_(APIView):
 
     def put(self, request, ticker, username, format=None):
         we = Watchlist_Entry.objects.get(ticker=Stock.objects.get(pk=ticker),
-                                            username=User.objects.get(pk=username)).first()
+                                            username=User.objects.get(pk=username))
         serializer = WatchlistEntrySerializer(we, data=request.data)
         print(we)
         if serializer.is_valid():
