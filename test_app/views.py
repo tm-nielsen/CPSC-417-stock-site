@@ -23,20 +23,21 @@ from rest_framework.serializers import Serializer
 from .models import *
 from .serializer import *
 
-class User(APIView):
+
+class User_(APIView):
     def get(self, request, pk, format=None):
         user = User.objects.get(pk=pk)
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
-    def post(self, request, pk, format=None):
+    def put(self, request, pk, format=None):
         user = User.objects.filter(pk=pk).first()
         serializer = UserSerializer(user, data=request.data)
         print(user)
         if serializer.is_valid():
             print(request.data)
             serializer.save()
-            return Response (serializer.data)
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
@@ -45,7 +46,7 @@ class User(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class Analyst(APIView):
+class Analyst_(APIView):
     def get(self, request, pk, format=None):
         a = Analyst.objects.get(pk=pk)
         serializer = AnalystSerializer(a)
@@ -58,7 +59,7 @@ class Analyst(APIView):
         if serializer.is_valid():
             print(request.data)
             serializer.save()
-            return Response (serializer.data)
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
@@ -67,7 +68,7 @@ class Analyst(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class Analysis(APIView):
+class Analysis_(APIView):
     def get(self, request, title, username, format=None):
         a = Analysis.objects.get(title=title, username=Analyst.objects.get(pk=username))
         serializer = AnalysisSerializer(a)
@@ -80,7 +81,7 @@ class Analysis(APIView):
         if serializer.is_valid():
             print(request.data)
             serializer.save()
-            return Response (serializer.data)
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, title, username, format=None):
@@ -89,7 +90,7 @@ class Analysis(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class Exchange(APIView):
+class Exchange_(APIView):
     def get(self, request, pk, format=None):
         e = Exchange.objects.get(pk=pk)
         serializer = ExchangeSerializer(e)
@@ -111,7 +112,7 @@ class Exchange(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class Stock(APIView):
+class Stock_(APIView):
     def get(self, request, pk, format=None):
         s = Stock.objects.get(pk=pk)
         serializer = StockSerializer(s)
@@ -133,7 +134,7 @@ class Stock(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class Put(APIView):
+class Put_(APIView):
     def get(self, request, ed, sp, t, format=None):
         p = Put.objects.get(expiry_date=ed, strike_price=sp, ticker=Stock.objects.get(pk=t))
         serializer = PutSerializer(p)
@@ -146,7 +147,7 @@ class Put(APIView):
         if serializer.is_valid():
             print(request.data)
             serializer.save()
-            return Response (serializer.data)
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, ed, sp, t, format=None):
@@ -155,7 +156,7 @@ class Put(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class Call(APIView):
+class Call_(APIView):
     def get(self, request, ed, sp, t, format=None):
         c = Call.objects.get(expiry_date=ed, strike_price=sp, ticker=Stock.objects.get(pk=t))
         serializer = CallSerializer(c)
@@ -168,7 +169,7 @@ class Call(APIView):
         if serializer.is_valid():
             print(request.data)
             serializer.save()
-            return Response (serializer.data)
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, ed, sp, t, format=None):
@@ -177,7 +178,7 @@ class Call(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ValueHistory(APIView):
+class ValueHistory_(APIView):
     def get(self, request, d, ticker, format=None):
         vh = Value_History.objects.get(date=d, ticker=Stock.objects.get(pk=ticker))
         serializer = ValueHistorySerializer(vh)
@@ -190,7 +191,7 @@ class ValueHistory(APIView):
         if serializer.is_valid():
             print(request.data)
             serializer.save()
-            return Response (serializer.data)
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, d, ticker, format=None):
@@ -199,20 +200,21 @@ class ValueHistory(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class HistogramEntry(APIView):
+class HistogramEntry_(APIView):
     def get(self, request, d, ticker, format=None):
         he = Histogram_Entry.objects.get(id=Value_History.objects.get(date=d, ticker=Stock.objects.get(pk=ticker)))
         serializer = HistogramEntrySerializer(he)
         return Response(serializer.data)
 
     def post(self, request, d, ticker, format=None):
-        he = Histogram_Entry.objects.filter(id=Value_History.objects.get(date=d, ticker=Stock.objects.get(pk=ticker))).first()
+        he = Histogram_Entry.objects.filter(
+            id=Value_History.objects.get(date=d, ticker=Stock.objects.get(pk=ticker))).first()
         serializer = HistogramEntrySerializer(he, data=request.data)
         print(he)
         if serializer.is_valid():
             print(request.data)
             serializer.save()
-            return Response (serializer.data)
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, d, ticker, format=None):
@@ -221,42 +223,46 @@ class HistogramEntry(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ViewedHistory(APIView):
+class ViewedHistory_(APIView):
     def get(self, request, d, username, ticker, format=None):
-        vh = ViewedHistory.objects.get(date_viewed=d, username=User.objects.get(pk=username), ticker=Stock.objects.get(pk=ticker))
+        vh = Viewed_History.objects.get(date_viewed=d, username=User.objects.get(pk=username),
+                                       ticker=Stock.objects.get(pk=ticker))
         serializer = ViewedHistorySerializer(vh)
         return Response(serializer.data)
 
     def post(self, request, d, username, ticker, format=None):
-        vh = ViewedHistory.objects.filter(date_viewed=d, username=User.objects.get(pk=username), ticker=Stock.objects.get(pk=ticker)).first()
+        vh = Viewed_History.objects.filter(date_viewed=d, username=User.objects.get(pk=username),
+                                          ticker=Stock.objects.get(pk=ticker)).first()
         serializer = ViewedHistorySerializer(vh, data=request.data)
         print(vh)
         if serializer.is_valid():
             print(request.data)
             serializer.save()
-            return Response (serializer.data)
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, d, username, ticker, format=None):
-        vh = ViewedHistory.objects.filter(date_viewed=d, username=User.objects.get(pk=username), ticker=Stock.objects.get(pk=ticker))
+        vh = Viewed_History.objects.filter(date_viewed=d, username=User.objects.get(pk=username),
+                                          ticker=Stock.objects.get(pk=ticker))
         vh.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class Watchlist_Entry(APIView):
+class WatchlistEntry_(APIView):
     def get(self, request, ticker, username, format=None):
         we = Watchlist_Entry.objects.get(ticker=Stock.objects.get(pk=ticker), username=User.objects.get(pk=username))
         serializer = WatchlistEntrySerializer(we)
         return Response(serializer.data)
 
     def post(self, request, ticker, username, format=None):
-        we = Watchlist_Entry.objects.filter(ticker=Stock.objects.get(pk=ticker), username=User.objects.get(pk=username)).first()
+        we = Watchlist_Entry.objects.filter(ticker=Stock.objects.get(pk=ticker),
+                                            username=User.objects.get(pk=username)).first()
         serializer = WatchlistEntrySerializer(we, data=request.data)
         print(we)
         if serializer.is_valid():
             print(request.data)
             serializer.save()
-            return Response (serializer.data)
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, ticker, username, format=None):
@@ -265,8 +271,7 @@ class Watchlist_Entry(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-
-#----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 
 def login_page(request):
     temp = loader.get_template('test_app/loginPage.html')
@@ -499,7 +504,7 @@ def calls_information(request, ticker):
             'exchange': StockAPI.get(ticker).exchange_id,
             'stock': StockAPI.get(ticker),
             'error_message': "There Are No Calls For The Selected Stock"
-            })
+        })
 
 
 def display_calls_information(request, ticker):
